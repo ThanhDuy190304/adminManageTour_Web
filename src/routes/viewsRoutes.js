@@ -24,6 +24,13 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.get('/accountManagement', (req,res) =>{
+    res.render('accountManagement',{
+        layout: 'main',
+        title: 'Account Manage',
+    });
+});
+
 
 
 module.exports = router;

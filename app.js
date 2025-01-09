@@ -34,11 +34,11 @@ Handlebars.registerHelper('round', (value) => {
   });
 const viewsRoutes = require('./src/routes/viewsRoutes');
 
+const dashboard = require('./src/routes/dashboardRoutes');
+const accountManagement = require('./src/routes/accountManagement');
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-// app.use(cookieParser());
-// app.use(authenticateToken);
 
 //Handlebars
 app.engine('hbs', exphbs.engine({
@@ -52,24 +52,8 @@ app.use(express.static(path.join(__dirname, 'src', 'public')));
 
 app.use('/', viewsRoutes);
 
-// app.use('/tours', tourRoutes);
-
-// app.use('/register', checkout, registerRoutes);
-
-// app.use('/login', checkout, loginRoutes);
-
-// app.use('/logout', requireAuth, logoutRoute);
-
-// app.use('/verify', checkout, verifyRoutes);
-
-// app.use('/user', requireAuth, userRoutes);
-
-// app.use('/feedback', feedbackRoutes);
-
-// app.use('/reservation', reservationRoutes);
-
-// app.use('/cart', cartRoutes);
-
+//app.use('/dashboard', dashboard);
+app.use('/accountManagement', accountManagement);
 
 
 app.listen(PORT, () => {
