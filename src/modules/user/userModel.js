@@ -19,6 +19,33 @@ class UserModel {
         }
         return null;
     }
+
+    static async getAllUsers() {
+        try {
+            const query = `SELECT u.user_name, u.email, r.role_name
+                        FROM users u, roles r
+                        WHERE u.role_id = r.id
+                        ORDER BY u.user_name ASC`
+            const result = await db.query(query);
+            return result.rows;
+        }
+        catch (error) {
+            console.log("Error in UserModel: ", error);
+        }
+    }
+
+    static async filterUsers(name_email) {
+        try {
+            const query = `SELECT distinct u.user_name, u.email, r.role_name
+                        FROM users u, roles r
+                        WHERE u.role_id = r.id and (u.user_name = $1 or u.email = $1)`
+            const result = await db.query(query, [name_email]);
+            return result.rows;
+        } catch (error) {
+            console.log('Error in userModel: ', error);
+        }
+    }
+
 }
 
 module.exports = UserModel;

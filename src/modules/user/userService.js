@@ -1,6 +1,7 @@
 const userModel = require("./userModel");
 const reservationService = require("../reservation/reservationService")
 const { format } = require('date-fns');
+const { ca } = require("date-fns/locale");
 
 class userService {
     static async getNumberOfUser() {
@@ -13,6 +14,29 @@ class userService {
         }
 
     }
+
+    static async getAllUsers(){
+        try{
+            let users = await userModel.getAllUsers();
+            return users;
+        }
+        catch(error){
+            console.log('Error in getAllUsers of userServices: ', error);
+            throw new Error("Error in getAllUsers of userServices");
+        }
+    }
+
+    static async filterUsers(name_email) {
+        try{
+            let users = await userModel.filterUsers(name_email);
+            return users;
+        }
+        catch(error){
+            console.log('Error in filterUsers of userServices: ', error);
+            throw new Error("Error in filterUsers of userServices");
+        }
+    }
+
 }
 
 module.exports = userService

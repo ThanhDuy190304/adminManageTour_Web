@@ -3,6 +3,7 @@ const router = express.Router();
 const tourModel = require('../modules/tour/tourModel');
 const userModel = require('../modules/user/userModel');
 const reserveModel = require('../modules/reservation/reservationModel');
+const userService = require('../modules/user/userService')
 
 //Route connect Home Page
 router.get('/', async (req, res) => {
@@ -24,11 +25,18 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/accountManagement', (req,res) =>{
-    res.render('accountManagement',{
-        layout: 'main',
-        title: 'Account Manage',
-    });
+router.get('/accountManagement', async (req, res) => {
+    try {
+        const users = await userService.getAllUsers();
+
+        res.render('accountManagement', {
+            layout: 'main',
+            users,
+            title: 'Account Manage',
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 

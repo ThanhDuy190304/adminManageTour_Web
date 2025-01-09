@@ -35,7 +35,7 @@ Handlebars.registerHelper('round', (value) => {
 const viewsRoutes = require('./src/routes/viewsRoutes');
 
 const dashboard = require('./src/routes/dashboardRoutes');
-const accountManagement = require('./src/routes/accountManagement');
+const accountManagement = require('./src/routes/accountManagementRoutes');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
