@@ -15,25 +15,36 @@ class userService {
 
     }
 
-    static async getAllUsers(){
-        try{
+    static async getAllUsers() {
+        try {
             let users = await userModel.getAllUsers();
             return users;
         }
-        catch(error){
+        catch (error) {
             console.log('Error in getAllUsers of userServices: ', error);
             throw new Error("Error in getAllUsers of userServices");
         }
     }
 
     static async filterUsers(name_email) {
-        try{
+        try {
             let users = await userModel.filterUsers(name_email);
             return users;
         }
-        catch(error){
+        catch (error) {
             console.log('Error in filterUsers of userServices: ', error);
             throw new Error("Error in filterUsers of userServices");
+        }
+    }
+
+    static async setBanOrUnban(user_id, isBanned) {
+        try {
+            let result = await userModel.setBanOrUnban(user_id, isBanned);
+            return result;
+        }
+        catch (error) {
+            console.log('Error in setBanOrUnban of userServices: ', error);
+            throw new Error("Error in setBanOrUnban of userServices");
         }
     }
 

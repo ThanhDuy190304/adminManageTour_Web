@@ -17,7 +17,7 @@ Handlebars.registerHelper('limit', function (array, limit) {
 Handlebars.registerHelper('eq', function (a, b) {
     return a === b;
 });
-Handlebars.registerHelper('times', function(n, block) {
+Handlebars.registerHelper('times', function (n, block) {
     let result = '';
     for (let i = 1; i <= n; i++) {
         result += block.fn(i);
@@ -26,12 +26,13 @@ Handlebars.registerHelper('times', function(n, block) {
 });
 Handlebars.registerHelper('round', (value) => {
     return Math.round(value);
-  });
-  
-  // Helper để cộng hai số
-  Handlebars.registerHelper('add', (a, b) => {
+});
+
+// Helper để cộng hai số
+Handlebars.registerHelper('add', (a, b) => {
     return a + b;
-  });
+});
+
 const viewsRoutes = require('./src/routes/viewsRoutes');
 
 const dashboard = require('./src/routes/dashboardRoutes');
@@ -54,7 +55,6 @@ app.use('/', viewsRoutes);
 
 //app.use('/dashboard', dashboard);
 app.use('/accountManagement', accountManagement);
-
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

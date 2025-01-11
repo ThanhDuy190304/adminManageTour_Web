@@ -13,14 +13,4 @@ router.get('/',(req,res) =>{
 
 });
 
-router.get('/accountManagement', (req,res) =>{
-
-    console.log('11');
-    res.render('accountManagement',{
-        layout: false,
-        title: 'account management page',
-    })
-
-});
-
 module.exports = router;
