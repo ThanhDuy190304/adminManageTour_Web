@@ -37,6 +37,7 @@ const viewsRoutes = require('./src/routes/viewsRoutes');
 
 const dashboard = require('./src/routes/dashboardRoutes');
 const accountManagement = require('./src/routes/accountManagementRoutes');
+const handleAccount = require('./src/routes/handleAccountRoutes');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -55,6 +56,7 @@ app.use('/', viewsRoutes);
 
 //app.use('/dashboard', dashboard);
 app.use('/accountManagement', accountManagement);
+app.use('/handleAccount', handleAccount);
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

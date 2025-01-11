@@ -10,15 +10,15 @@ async function fetchUsers() {
     try {
         const response = await fetch('/handle');
         const data = await response.json();
-        users = data.users;
-        console.log(users);
+        console.log(data);
+        users = data;
         displayUserList(users);
     } catch (error) {
         console.error('Error fetching users:', error);
     }
 }
 
-fetchUsers();
+// fetchUsers();
 
 // searchButton.addEventListener('click', async function () {
 
@@ -89,22 +89,14 @@ async function loadUserList() {
     const searchItem = searchInput.value;
 
     try {
-        // Xây dựng URL với các tham số tìm kiếm và sắp xếp
-        const url = new URL('/api/filterUsers', window.location.origin);
-        
-        // Thêm các tham số sắp xếp, tìm kiếm vào URL
-        url.searchParams.set('sortBy', sortByValue);
-        url.searchParams.set('order', orderValue);
-        if (searchItem) {
-            url.searchParams.set('search', searchItem);
-        }
 
-        const response = await fetch(url);
+        const response = await fetch('/handle');
         if (!response.ok) {
             throw new Error('Failed to fetch users');
         }
 
         const data = await response.json();
+        console.log(data);
 
         displayUserList(data.users);
     } catch (error) {
@@ -119,6 +111,8 @@ sortBy.addEventListener('change', function(){
 order.addEventListener('change', function(){
     loadUserList();
 });
+
+//---------------------------------------
 
 function displayUserList(users) {
 

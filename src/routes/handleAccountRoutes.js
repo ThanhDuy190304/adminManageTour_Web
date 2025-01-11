@@ -6,8 +6,10 @@ const userService = require('../modules/user/userService')
 router.get('/handle', async (req, res) => {
     try {
         const users = await userService.filterUsers();
-        return users.json();
+        return res.json(users);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
+
+module.exports = router;

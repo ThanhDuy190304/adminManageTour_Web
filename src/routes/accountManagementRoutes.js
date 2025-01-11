@@ -4,9 +4,9 @@ const userController = require('../modules/user/userController')
 const userService = require('../modules/user/userService')
 
 router.get('/', async (req, res) => {
-
     try {
         const users = await userService.getAllUsers();
+        //const users = await userController.getAllUsers()
 
         if (res.locals.user) {
             return res.redirect('/');
