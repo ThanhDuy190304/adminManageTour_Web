@@ -3,10 +3,6 @@ const exphbs = require('express-handlebars');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const { authenticateToken, requireAdmin } = require('./src/middleware/authMiddleware');
-
-// const cookieParser = require('cookie-parser');
-// const { authenticateToken, requireAuth, checkout } = require('./src/middleware/authMiddleware');
-
 const app = express();
 const PORT = 3001;
 
@@ -36,6 +32,7 @@ Handlebars.registerHelper('add', (a, b) => {
 });
 
 const viewsRoutes = require('./src/routes/viewsRoutes');
+const tourRoutes = require('./src/routes/tourRoutes');
 
 const dashboard = require('./src/routes/dashboardRoutes');
 const accountManagement = require('./src/routes/accountManagementRoutes');
@@ -63,6 +60,8 @@ app.use('/accountManagement', requireAdmin, accountManagement);
 app.use('/logout', requireAdmin, logoutRoutes);
 app.use('/orderManagement', requireAdmin, orderManagementRoutes);
 app.use('/dashboard', requireAdmin, dashboard);
+
+app.use('/tour-management', requireAdmin, tourRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

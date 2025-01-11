@@ -13,86 +13,66 @@ class tourModel {
         return null;
     }
 
-	// static async getTours(page, searchQuery, sort, locationQuery, rateQuery,minPriceQuery,maxPriceQuery, voucherQuery) {
-	// 	if (!Array.isArray(rateQuery)) { rateQuery = [rateQuery]; }
-	// 	if (!Array.isArray(voucherQuery)) { voucherQuery = [voucherQuery]; }
-	// 	if (!Array.isArray(locationQuery)) { locationQuery = [locationQuery]; }
+	static async getTours(page, searchQuery, sort, locationQuery, companyQuery) {
+		if (!Array.isArray(locationQuery)) { locationQuery = [locationQuery]; }
+        if (!Array.isArray(companyQuery)) { companyQuery = [companyQuery]; }
+		const query = `
+            FROM tours t
+            LEFT JOIN tour_images t_i ON t.tour_id = t_i.tour_id
+            LEFT JOIN locations lo ON lo.location_id = t.location_id
+            WHERE t_i.img_id = 1
+            AND ('${searchQuery}' = 'default' OR t.title LIKE CONCAT('%', '${searchQuery}', '%'))
+            AND ('${searchQuery}' = 'default' OR t.brief LIKE CONCAT('%', '${searchQuery}', '%'))
+            AND (
+                '${locationQuery[0]}' LIKE 'default' OR
+                ${locationQuery.map((location, index) => `
+                (lo.location_name LIKE CONCAT('%', '${location}', '%'))
+                ${index < locationQuery.length - 1 ? 'OR' : ''}
+                `).join('')}
+            )
+        `;
+		const countSelect = `SELECT COUNT(*) AS total_rows`;
+		const dataSelect = `SELECT t.tour_id, t.title, t.brief, t.prices, t_i.img_url, t.location_id`;
 
-	// 	const query = `
-    //         FROM tours t
-    //         LEFT JOIN tour_images t_i ON t.tour_id = t_i.tour_id
-    //         LEFT JOIN locations lo ON lo.location_id = t.location_id
-    //         WHERE t_i.img_id = 1
-    //         AND ('${searchQuery}' = 'default' OR t.title LIKE CONCAT('%', '${searchQuery}', '%'))
-    //         AND ('${searchQuery}' = 'default' OR t.brief LIKE CONCAT('%', '${searchQuery}', '%'))
-    //         AND (
-    //             ${minPriceQuery} = -1 OR ${maxPriceQuery} = -1 OR
-    //             (t.prices >= CAST(${minPriceQuery} AS REAL) AND t.prices <= CAST(${maxPriceQuery} AS REAL))
-    //         )
-    //         AND (
-    //             ${rateQuery[0]} = -1 OR
-    //             ${rateQuery.map((rate, index) => `
-    //             (t.rate = CAST(${rate} AS INT))
-    //             ${index < rateQuery.length - 1 ? 'OR' : ''}
-    //             `).join('')}
-    //         )
-    //         AND (
-    //             ${voucherQuery[0]} = -1 OR
-    //             ${voucherQuery.map((voucher, index) => `
-    //             (t.voucher >= CAST(${voucher} AS REAL) AND t.voucher <= CAST(${voucher} AS REAL) + 4)
-    //             ${index < voucherQuery.length - 1 ? 'OR' : ''}
-    //             `).join('')}
-    //         )
-    //         AND (
-    //             '${locationQuery[0]}' LIKE 'default' OR
-    //             ${locationQuery.map((location, index) => `
-    //             (lo.location_name LIKE CONCAT('%', '${location}', '%'))
-    //             ${index < locationQuery.length - 1 ? 'OR' : ''}
-    //             `).join('')}
-    //         )
-    //     `;
-	// 	const countSelect = `SELECT COUNT(*) AS total_rows`;
-	// 	const dataSelect = `SELECT t.tour_id, t.title, t.brief, t.prices, t_i.img_url, t.location_id`;
+        let filterSort
+        if (sort) {
+            switch (sort) {
+                case 'asc_price':
+                    filterSort = 'ORDER BY t.prices ASC';
+                    break;
+                case 'desc_price':
+                    filterSort =  'ORDER BY t.prices DESC';
+                    break;
+                case 'asc_rate':
+                    filterSort = 'ORDER BY t.rate ASC';
+                    break;
+                case 'desc_rate':
+                    filterSort = 'ORDER BY t.rate DESC';
+                    break;
+                default:
+                    filterSort = ''; // Giá trị mặc định nếu không khớp
+                    break;
+            }
+        }
 
-    //     let filterSort
-    //     if (sort) {
-    //         switch (sort) {
-    //             case 'asc_price':
-    //                 filterSort = 'ORDER BY t.prices ASC';
-    //                 break;
-    //             case 'desc_price':
-    //                 filterSort =  'ORDER BY t.prices DESC';
-    //                 break;
-    //             case 'asc_rate':
-    //                 filterSort = 'ORDER BY t.rate ASC';
-    //                 break;
-    //             case 'desc_rate':
-    //                 filterSort = 'ORDER BY t.rate DESC';
-    //                 break;
-    //             default:
-    //                 filterSort = ''; // Giá trị mặc định nếu không khớp
-    //                 break;
-    //         }
-    //     }
-
-	// 	const countQuery = `${countSelect} ${query}`;
-	// 	const dataQuery = `
-    //         ${dataSelect}
-    //         ${query}
-    //         ${filterSort}
-    //         LIMIT 6 OFFSET ${(page - 1) * 6}
-    //     `;
-	// 	try {
-	// 		const paginatedTours = await db.query(dataQuery);
-	// 		const totalPages = await db.query(countQuery);
-	// 		return {
-	// 			paginatedTours: paginatedTours.rows,
-	// 			totalPages: Math.ceil(totalPages.rows[0].total_rows / 6)
-	// 		};
-	// 	} catch (err) {
-	// 		throw new Error('Error fetching tours by location: ' + err.message);
-	// 	}
-	// }
+		const countQuery = `${countSelect} ${query}`;
+		const dataQuery = `
+            ${dataSelect}
+            ${query}
+            ${filterSort}
+            LIMIT 6 OFFSET ${(page - 1) * 6}
+        `;
+		try {
+			const paginatedTours = await db.query(dataQuery);
+			const totalPages = await db.query(countQuery);
+			return {
+				paginatedTours: paginatedTours.rows,
+				totalPages: Math.ceil(totalPages.rows[0].total_rows / 6)
+			};
+		} catch (err) {
+			throw new Error('Error fetching tours by location: ' + err.message);
+		}
+	}
 
 	// static async getToursByIDLocation(tour_id) {
 	// 	const query = `
