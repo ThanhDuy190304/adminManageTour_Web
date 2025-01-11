@@ -13,7 +13,6 @@
             <select id="sortBy" class="p-2 border border-gray-300 rounded-lg">
                 <option value="name">user name</option>
                 <option value="email">email</option>
-                <option value="registration">registration time</option>
             </select>
         </div>
 
@@ -34,13 +33,16 @@
                         <th class="px-4 py-2 text-left">Name</th>
                         <th class="px-4 py-2 text-left">Email</th>
                         <th class="px-4 py-2 text-left">Role</th>
-                        <th class="px-4 py-2 text-center">Status</th>
-                        <th class="px-4 py-2 text-center">Active</th>
+                        <<<<<<< HEAD <th class="px-4 py-2 text-center">Status</th>
+                            <th class="px-4 py-2 text-center">Active</th>
+                            =======
+                            <th class="px-4 py-2 text-center"></th>
+                            >>>>>>> origin/accountManagement
                     </tr>
                 </thead>
                 <tbody>
                     {{#each users}}
-                    <tr class="border-b">
+                    <<<<<<< HEAD <tr class="border-b">
                         <td class="px-4 py-2 text-left">{{this.user_name}}</td>
                         <td class="px-4 py-2 text-left">{{this.email}}</td>
                         <td class="px-4 py-2 text-left">{{this.role_name}}</td>
@@ -53,9 +55,19 @@
                         <td class="px-4 py-2 text-center">
                             <button class="text-blue-500 hover:text-blue-700">change</button>
                             <button class="ml-2 text-red-500 hover:text-red-700">delete</button>
-                        </td>
-                    </tr>
-                    {{/each}}
+                            =======
+                            <tr class="border-b user-row" data-user-id="{{this.user_id}}"
+                                data-user-name="{{this.user_name}}" data-email="{{this.email}}"
+                                data-role-name="{{this.role_name}}" data-isbanned="{{this.is_banned}}">
+                                <td class="px-4 py-2 text-left">{{this.user_name}}</td>
+                                <td class="px-4 py-2 text-left">{{this.email}}</td>
+                                <td class="px-4 py-2 text-left">{{this.role_name}}</td>
+                                <td>
+                                    <button class="ml-2 hover:text-red-500" id="open_dialog">More</button>
+                                    >>>>>>> origin/accountManagement
+                                </td>
+                            </tr>
+                            {{/each}}
                 </tbody>
             </table>
         </div>
@@ -72,6 +84,33 @@
         </ul>
         {{/if}}
     </div>
-</section>
+    <<<<<<< HEAD </section>
 
+        =======
+
+        <dialog id="modal" class="bg-white rounded-lg shadow-lg p-6 w-96 max-w-lg">
+            <div class="space-y-4">
+                <h3 class="text-2xl font-semibold text-gray-800">User Details</h3>
+                <div class="space-y-2 text-gray-700">
+                    <p><strong class="text-gray-800">User ID:</strong> <span id="user_id"></span></p>
+                    <p><strong class="text-gray-800">User Name:</strong> <span id="user_name"></span></p>
+                    <p><strong class="text-gray-800">Email:</strong> <span id="email"></span></p>
+                    <p><strong class="text-gray-800">Role Name:</strong> <span id="role_id"></span></p>
+                </div>
+                <div class="flex justify-between">
+                    <button id="close_dialog"
+                        class="px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        Close
+                    </button>
+                    <button id="ban_button"
+                        class="px-4 py-2 bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 hidden">
+                        Ban
+                    </button>
+                </div>
+            </div>
+
+        </dialog>
+
+</section>
+>>>>>>> origin/accountManagement
 <script src="/js/accountManagement.js"></script>

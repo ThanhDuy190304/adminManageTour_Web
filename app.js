@@ -62,6 +62,7 @@ app.use('/', requireAdmin, viewsRoutes);
 app.use('/accountManagement', requireAdmin, accountManagement);
 app.use('/logout', requireAdmin, logoutRoutes);
 app.use('/orderManagement', requireAdmin, orderManagementRoutes);
+app.use('/dashboard', requireAdmin, dashboard);
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
