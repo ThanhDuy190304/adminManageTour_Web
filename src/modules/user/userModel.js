@@ -1,6 +1,7 @@
 const db = require('../../config/db');
 
 class UserModel {
+    
     static async getNumberOfUser() {
         const query = `SELECT 
                             COUNT(DISTINCT t.tourist_id) + COUNT(DISTINCT a.admin_id) AS total,

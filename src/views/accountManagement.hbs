@@ -37,18 +37,6 @@
                     </tr>
                 </thead>
                 <tbody id="userList">
-                    {{#each users}}
-                    <tr class="border-b user-row" data-user-id="{{this.user_id}}" data-user-name="{{this.user_name}}"
-                        data-email="{{this.email}}" data-role-name="{{this.role_name}}"
-                        data-isbanned="{{this.is_banned}}">
-                        <td class="px-4 py-2 text-left">{{this.user_name}}</td>
-                        <td class="px-4 py-2 text-left">{{this.email}}</td>
-                        <td class="px-4 py-2 text-left">{{this.role_name}}</td>
-                        <td>
-                            <button class="ml-2 hover:text-red-500" id="open_dialog">More</button>
-                        </td>
-                    </tr>
-                    {{/each}}
                 </tbody>
             </table>
         </div>

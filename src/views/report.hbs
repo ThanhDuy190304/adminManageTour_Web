@@ -1,0 +1,50 @@
+<section>
+
+    <div class="flex mb-4">
+        <div class="mr-4">
+            <label for="type" class="text-sm font-medium text-gray-700">Venue by</label>
+            <select id="type" class="p-2 border border-gray-300 rounded-lg">
+                <option value="yearSelector">year</option>
+                <option value="monthSelector">month</option>
+                <option value="daySelector">day</option>
+            </select>
+        </div>
+        <div class="mr-4">
+            <label for="sortBy" class="text-sm font-medium text-gray-700">Sort by</label>
+            <select id="sortBy" class="p-2 border border-gray-300 rounded-lg">
+                <option value="time">time</option>
+                <option value="total_money">total Money</option>
+            </select>
+        </div>
+        <div class="mr-4">
+            <label for="order" class="text-sm font-medium text-gray-700">Order</label>
+            <select id="order" class="p-2 border border-gray-300 rounded-lg">
+                <option value="ASC">Ascending</option>
+                <option value="DESC">Descending</option>
+            </select>
+        </div>
+        <Button>
+            <button id="viewButton" class="m-4 p-3 bg-blue-500 rounded-lg">View</button>
+        </Button>
+    </div>
+
+    <div class="overflow-x-auto bg-white p-4 rounded-lg shadow-md">
+        <div class="overflow-x-auto bg-white p-4 rounded-lg shadow-md">
+            <table class="min-w-full table-auto">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="px-4 py-2 text-left">Time</th>
+                        <th class="px-4 py-2 text-left">Total money</th>
+                    </tr>
+                </thead>
+                <tbody id="venueList">
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    
+
+</section>
+<script src="/js/report.js"></script>

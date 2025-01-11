@@ -39,6 +39,7 @@ const accountManagement = require('./src/routes/accountManagementRoutes');
 const handleAccount = require('./src/routes/handleAccountRoutes');
 const logoutRoutes = require('./src/routes/logoutRoutes');
 const orderManagementRoutes = require('./src/routes/orderManagementRoutes');
+const reportRoutes = require('./src/routes/reportRoutes');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -57,15 +58,16 @@ app.set('views', path.join(__dirname, 'src', 'views'))
 app.use(express.static(path.join(__dirname, 'src', 'public')));
 
 app.use('/', viewsRoutes);
+app.use('/accountManagement', accountManagement);
 //app.use('/accountManagement', requireAdmin, accountManagement);
+//app.use('/report', requireAdmin, reportRoutes);
+app.use('/report', reportRoutes);
 app.use('/logout', requireAdmin, logoutRoutes);
 app.use('/orderManagement', requireAdmin, orderManagementRoutes);
 app.use('/dashboard', requireAdmin, dashboard);
-
-//app.use('/dashboard', dashboard);
-app.use('/accountManagement', accountManagement);
 app.use('/handleAccount', requireAdmin, handleAccount);
 app.use('/tour-management', requireAdmin, tourRoutes);
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
