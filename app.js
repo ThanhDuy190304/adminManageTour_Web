@@ -36,6 +36,7 @@ const tourRoutes = require('./src/routes/tourRoutes');
 
 const dashboard = require('./src/routes/dashboardRoutes');
 const accountManagement = require('./src/routes/accountManagementRoutes');
+const handleAccount = require('./src/routes/handleAccountRoutes');
 const logoutRoutes = require('./src/routes/logoutRoutes');
 const orderManagementRoutes = require('./src/routes/orderManagementRoutes');
 
