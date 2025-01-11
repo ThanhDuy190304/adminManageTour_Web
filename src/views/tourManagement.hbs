@@ -1,0 +1,153 @@
+<section class="my-16" id="listTour">
+    <div class="mb-8 mx-4 sm:mx-8 md:mx-16" id="divide">
+        <div class="w-full ">
+            <h2 class="text-3xl sm:text-4xl md:text-6xl font-semibold mb-4">{{location_name}}</h2>
+            <p class="text-base sm:text-lg font-medium text-gray-600 mb-8">{{loc_detail}}</p>
+        </div>
+    </div>
+    <hr class="w-full	border-gray-200 my-8 mx-auto">
+    <div class="flex justify-end mb-4">
+        <button id="addTourButton" class="mr-10 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
+            Add New Tour
+        </button>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 sm:mx-8 md:mx-16">
+        <!-- Hàng 1 -->
+        <div class="flex items-center space-x-4">
+            <label for="searchInput" class="mr-2 w-full">Search Tour:</label>
+            <input type="text" id="searchInput" class="bg-gray-200 px-4 py-2 rounded w-full" placeholder="Enter tour keyword">
+        </div>
+        <div class="flex items-center space-x-4">
+            <label for="sortSelect" class="mr-2 w-full">Sort By:</label>
+            <select id="sortSelect" class="bg-gray-200 px-4 py-2 rounded w-full">
+                <option value="">Select</option>
+                <option value="asc_price">Price: Increase</option>
+                <option value="desc_price">Price: Decrease</option>
+                <option value="asc_rate">Rate: Increase</option>
+                <option value="desc_rate">Rate: Decrease</option>
+            </select>
+        </div>
+
+        <!-- Hàng 2 -->
+        <div class="flex items-center space-x-4">
+            <label for="filterLocation" class="mr-2 w-full">Location:</label>
+            <select id="filterLocation" class="bg-gray-200 px-4 py-2 rounded w-full">
+                <option value="">Select</option>
+                <option value="Ha Long Bay">Ha Long Bay</option>
+                <option value="Hue">Hue</option>
+                <option value="Ho Chi Minh City">Ho Chi Minh City</option>
+                <option value="Ha Noi">Ha Noi</option>
+                <option value="Da Nang">Da Nang</option>
+                <option value="Da Lat">Da Lat</option>
+                <option value="Vung Tau">Vung Tau</option>
+                <option value="Ninh Binh">Ninh Binh</option>
+            </select>
+        </div>
+        <div class="flex items-center space-x-4">
+            <label for="filterCommpany" class="mr-2 w-full">Travel Company:</label>
+            <select id="filterCommpany" class="bg-gray-200 px-4 py-2 rounded w-full">
+                <option value="">Select</option>
+                <option value="Saigontourist">Saigontourist</option>
+                <option value="Vietravel">Vietravel</option>
+                <option value="Fiditour">Fiditour</option>
+                <option value="Bến Thành Tourist">Bến Thành Tourist</option>
+            </select>
+        </div>
+    </div>
+
+    <hr class="w-full border-gray-200 my-8 mx-auto">
+
+    <div class="flex flex-col sm:flex-row gap-4">
+    <div class="w-full">
+        <div id="showTours" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mx-4 sm:mx-8 md:mx-16">
+            {{#each allTours}}
+                <a href="/tours/{{tour_id}}" class="w-full max-w-xs flex-shrink-0 mx-auto">
+                    <div class="flex flex-col justify-between bg-white rounded-lg shadow-lg overflow-hidden h-full transition-transform duration-300 ease-in-out hover:scale-105">
+                        <div class="flex flex-col h-full">
+                            <!-- Giảm kích thước hình ảnh -->
+                            <img src="{{img_url}}" alt="" class="w-full h-36 object-cover rounded-t-lg">
+                            <div class="p-4 flex flex-col justify-between flex-grow">
+                                <!-- Tên và giá tour theo hàng ngang -->
+                                <div class="flex justify-between items-center">
+                                    <h3 class="name text-lg font-semibold">{{title}}</h3>
+                                    <p class="price text-gray-600">${{prices}}</p>
+                                </div>
+                                <!-- Mô tả tour -->
+                                <p class="text-gray-600 w-full overflow-hidden text-ellipsis line-clamp-2 mt-2">{{brief}}</p>
+                            </div>
+                        </div>
+
+                        <!-- Đánh giá và nút xem chi tiết -->
+                        <div class="flex justify-between items-center px-4 pb-4">
+                            <div class="flex">
+                                <i class="fa-solid fa-star text-yellow-500"></i>
+                                <i class="fa-solid fa-star text-yellow-500"></i>
+                                <i class="fa-solid fa-star text-yellow-500"></i>
+                                <i class="fa-solid fa-star text-yellow-500"></i>
+                                <i class="fa-solid fa-star text-yellow-500"></i>
+                            </div>
+                            <button type="button" class="self-end px-4 py-2 bg-green-900 text-white rounded-full hover:bg-green-950 transition-colors duration-200" value="{{tour_id}}" onclick="deleteTour(this)">Delete</button>
+                            <button type="button" id="udateTourButton" class="self-end px-4 py-2 bg-green-900 text-white rounded-full hover:bg-green-950 transition-colors duration-200" value="{{tour_id}}" onclick="updateTour(this)">Update</button>
+                        </div>
+                    </div>
+                </a>
+            {{/each}}
+        </div>
+
+        <div value={{totalPages}} class="pagination flex justify-center gap-4 mt-6 px-8">
+            <button id="prev-page" class="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors" onclick="prevPage()">Previous</button>
+            <div id="pageNumbers" class="flex gap-2">
+                {{#times totalPages}}
+                    <button class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-blue-500 hover:text-white transition-all">{{this}}</button>
+                {{/times}}
+            </div>
+            <button id="next-page" class="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors" onclick="nextPage()">Next</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Add/Update Tour -->
+<div id="tourModal" class="fixed inset-0 z-50 hidden bg-gray-800 bg-opacity-50 justify-center items-center flex">
+    <div class="bg-white p-6 rounded-lg w-full sm:w-1/2 lg:w-1/3">
+        <h2 id="modalTitle" class="text-2xl font-semibold mb-4">Add New Tour</h2>
+
+        <!-- Form nhập thông tin tour -->
+        <form id="tourForm">
+            <div class="mb-4">
+                <label for="tourTitle" class="block text-gray-700">Tour Title</label>
+                <input type="text" id="tourTitle" name="title" class="w-full p-3 border rounded-lg" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="tourLocation" class="block text-gray-700">Location</label>
+                <select id="tourLocation" name="location" class="w-full p-3 border rounded-lg" required>
+                    <option value="Ha Long Bay">Ha Long Bay</option>
+                    <option value="Hue">Hue</option>
+                    <option value="Ho Chi Minh City">Ho Chi Minh City</option>
+                    <option value="Ha Noi">Ha Noi</option>
+                    <option value="Da Nang">Da Nang</option>
+                    <option value="Da Lat">Da Lat</option>
+                    <option value="Vung Tau">Vung Tau</option>
+                    <option value="Ninh Binh">Ninh Binh</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="tourPrice" class="block text-gray-700">Price</label>
+                <input type="number" id="tourPrice" name="price" class="w-full p-3 border rounded-lg" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="tourDescription" class="block text-gray-700">Description</label>
+                <textarea id="tourDescription" name="description" class="w-full p-3 border rounded-lg" rows="4" required></textarea>
+            </div>
+
+            <div class="flex justify-between">
+                <button type="button" id="closeModalButton" class="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600">Cancel</button>
+                <button type="submit" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+</section>
+<script src="/js/tourManagement.js"></script>

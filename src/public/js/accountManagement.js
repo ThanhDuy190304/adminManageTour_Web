@@ -8,107 +8,67 @@ let users;
 
 async function fetchUsers() {
     try {
-        const response = await fetch('/handle');
+        const response = await fetch('/accountManagement/getAllUsers');
         const data = await response.json();
-        console.log(data);
-        users = data;
+        users = data.users;
+        //console.log(users);
         displayUserList(users);
     } catch (error) {
         console.error('Error fetching users:', error);
     }
-}
+};
 
-// fetchUsers();
+searchButton.addEventListener('click', async function () {
 
-// searchButton.addEventListener('click', async function () {
+    const searchItem = searchInput.value;
 
-//     const searchItem = searchInput.value;
+    try {
+        const response = await fetch(`/accountManagement/getFilter/${searchItem}`);
+        const data = await response.json();
+        users = data.users;
+        console.log(users);
+        displayUserList(users);
+    }
+    catch (error) {
+        console.error('Error fetching users:', error);
+    }
 
-    
-
-// });
-
-
-
-// function getUsersList(){
-    
-
-// }
-
-// function sortAndDisplayUsers(){
-
-//     const sortByValue = sortBy.value;
-//     const orderValue = order.value;
-
-//     const sortedUsers = users.slice();
-//     sortedUsers.sort((a, b) => {
-//         if (sortByValue === 'name') {
-//             return orderValue === 'asc' ? a.user_name.localeCompare(b.user_name) : b.user_name.localeCompare(a.user_name);
-//         }
-//         else if (sortByValue === 'email') {
-//             return orderValue === 'asc' ? a.email.localeCompare(b.email) : b.email.localeCompare(a.email);
-//         }
-//         return 0;
-//     });
-
-//     displayUserList(sortedUsers)
-// }
-
-// async function loadUserList() {
-    
-//     const sortByValue = sortBy.value;
-//     const orderValue = order.value;
-
-//     try {
-//         const url = new URL('/api/filterUsers', window.location.origin);
-        
-//         // Thêm các tham số sắp xếp và tìm kiếm vào URL
-//         url.searchParams.set('sortBy', sortByValue);
-//         url.searchParams.set('order', orderValue);
-//         if (searchItem) {
-//             url.searchParams.set('search', searchItem);
-//         }
-
-//         // const response = await fetch(url);
-//         // if (!response.ok) {
-//         //     throw new Error('Failed to fetch users');
-//         // }
-
-//         // const data = await response.json();
-//         displayUserList(data.users);
-//     } catch (error) {
-//         console.error('Error loading users:', error);
-//     }
-
-// }
+});
 
 async function loadUserList() {
 
     const sortByValue = sortBy.value;
     const orderValue = order.value;
-    const searchItem = searchInput.value;
 
     try {
 
-        const response = await fetch('/handle');
-        if (!response.ok) {
-            throw new Error('Failed to fetch users');
+        if(orderValue == 'asc'){
+            if (sortByValue === 'name') {
+                users.sort((a, b) => a.user_name.localeCompare(b.user_name));
+            } else if (sortByValue === 'email') {
+                users.sort((a, b) => a.email.localeCompare(b.email));
+            }
+        }
+        else{
+            if (sortByValue === 'name') {
+                users.sort((a, b) => b.user_name.localeCompare(a.user_name));
+            } else if (sortByValue === 'email') {
+                users.sort((a, b) => b.email.localeCompare(a.email));
+            }
         }
 
-        const data = await response.json();
-        console.log(data);
-
-        displayUserList(data.users);
+        console.log(users);
+        displayUserList(users);
     } catch (error) {
         console.error('Error loading users:', error);
     }
 }
 
-sortBy.addEventListener('change', function(){
+sortBy.addEventListener('change', function () {
     loadUserList();
 });
 
-order.addEventListener('change', function(){
+order.addEventListener('change', function () {
     loadUserList();
 });
 
@@ -237,7 +197,7 @@ banButton.addEventListener('click', async function () {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId, isBanned: JSON.parse(is_banned)})
+        body: JSON.stringify({ userId, isBanned: JSON.parse(is_banned) })
     });
 
     const data = await response.json();
@@ -247,3 +207,5 @@ banButton.addEventListener('click', async function () {
     row.setAttribute('data-isbanned', is_banned);
 
 });
+
+document.addEventListener('DOMContentLoaded', fetchUsers);

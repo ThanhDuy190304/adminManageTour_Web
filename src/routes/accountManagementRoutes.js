@@ -1,25 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../modules/user/userController')
-const userService = require('../modules/user/userService')
 
 router.get('/', async (req, res) => {
-    try {
-        const users = await userService.getAllUsers();
-        //const users = await userController.getAllUsers()
-
-        if (res.locals.user) {
-            return res.redirect('/');
-        }
-        res.render('accountManagement', {
-            layout: 'main',
-            users,
-            title: 'account management',
-        });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+    res.render('accountManagement', {
+        layout: 'main',
+        title: 'account management',
+    });
 });
+
+router.get('/getAllUsers', userController.getAllUsers);
+router.get('/getFilter/:name_email',userController.filterUsers);
 
 router.post('/', userController.setBanOrUnban);
 
