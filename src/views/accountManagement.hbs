@@ -1,0 +1,93 @@
+<section>
+    <div class="flex justify-between items-center mb-6">
+        <div class="w-1/2">
+            <input type="text" id="search" class="w-full p-3 border border-gray-300 rounded-lg"
+                placeholder="Filter by name/email">
+        </div>
+        <button id="searchButton" class="m-4 p-3 bg-blue-500 rounded-lg">Search</button>
+    </div>
+
+    <div class="flex mb-4">
+        <div class="mr-4">
+            <label for="sortBy" class="text-sm font-medium text-gray-700">Sort by</label>
+            <select id="sortBy" class="p-2 border border-gray-300 rounded-lg">
+                <option value="name">user name</option>
+                <option value="email">email</option>
+            </select>
+        </div>
+
+        <div class="mr-4">
+            <label for="order" class="text-sm font-medium text-gray-700">Order</label>
+            <select id="order" class="p-2 border border-gray-300 rounded-lg">
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="userList" class="overflow-x-auto bg-white p-4 rounded-lg shadow-md">
+        <div class="overflow-x-auto bg-white p-4 rounded-lg shadow-md">
+            <table class="min-w-full table-auto">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="px-4 py-2 text-left">Name</th>
+                        <th class="px-4 py-2 text-left">Email</th>
+                        <th class="px-4 py-2 text-left">Role</th>
+                        <th class="px-4 py-2 text-center"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each users}}
+                    <tr class="border-b user-row" data-user-id="{{this.user_id}}" data-user-name="{{this.user_name}}"
+                        data-email="{{this.email}}" data-role-name="{{this.role_name}}"
+                        data-isbanned="{{this.is_banned}}">
+                        <td class="px-4 py-2 text-left">{{this.user_name}}</td>
+                        <td class="px-4 py-2 text-left">{{this.email}}</td>
+                        <td class="px-4 py-2 text-left">{{this.role_name}}</td>
+                        <td>
+                            <button class="ml-2 hover:text-red-500" id="open_dialog">More</button>
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="pagination" class="flex justify-center mt-6">
+        {{#if pagination}}
+        <ul class="flex">
+            {{#each pagination}}
+            <li class="mx-1">
+                <a href="?page={{this}}" class="px-4 py-2 text-blue-500 hover:text-blue-700">{{this}}</a>
+            </li>
+            {{/each}}
+        </ul>
+        {{/if}}
+    </div>
+
+    <dialog id="modal" class="bg-white rounded-lg shadow-lg p-6 w-96 max-w-lg">
+        <div class="space-y-4">
+            <h3 class="text-2xl font-semibold text-gray-800">User Details</h3>
+            <div class="space-y-2 text-gray-700">
+                <p><strong class="text-gray-800">User ID:</strong> <span id="user_id"></span></p>
+                <p><strong class="text-gray-800">User Name:</strong> <span id="user_name"></span></p>
+                <p><strong class="text-gray-800">Email:</strong> <span id="email"></span></p>
+                <p><strong class="text-gray-800">Role Name:</strong> <span id="role_id"></span></p>
+            </div>
+            <div class="flex justify-between">
+                <button id="close_dialog"
+                    class="px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Close
+                </button>
+                <button id="ban_button"
+                    class="px-4 py-2 bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 hidden">
+                    Ban
+                </button>
+            </div>
+        </div>
+
+    </dialog>
+
+</section>
+<script src="/js/accountManagement.js"></script>
