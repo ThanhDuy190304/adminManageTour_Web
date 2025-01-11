@@ -6,7 +6,7 @@ const path = require('path');
 // const { authenticateToken, requireAuth, checkout } = require('./src/middleware/authMiddleware');
 
 const app = express();
-const PORT = 3000;
+const PORT = 3001;
 
 const Handlebars = require('handlebars');
 
@@ -17,7 +17,7 @@ Handlebars.registerHelper('limit', function (array, limit) {
 Handlebars.registerHelper('eq', function (a, b) {
     return a === b;
 });
-Handlebars.registerHelper('times', function(n, block) {
+Handlebars.registerHelper('times', function (n, block) {
     let result = '';
     for (let i = 1; i <= n; i++) {
         result += block.fn(i);
@@ -26,12 +26,12 @@ Handlebars.registerHelper('times', function(n, block) {
 });
 Handlebars.registerHelper('round', (value) => {
     return Math.round(value);
-  });
-  
-  // Helper để cộng hai số
-  Handlebars.registerHelper('add', (a, b) => {
+});
+
+// Helper để cộng hai số
+Handlebars.registerHelper('add', (a, b) => {
     return a + b;
-  });
+});
 const viewsRoutes = require('./src/routes/viewsRoutes');
 
 app.use(express.urlencoded({ extended: true }));
