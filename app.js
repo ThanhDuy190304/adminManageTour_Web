@@ -33,6 +33,7 @@ Handlebars.registerHelper('round', (value) => {
     return a + b;
   });
 const viewsRoutes = require('./src/routes/viewsRoutes');
+const tourRoutes = require('./src/routes/tourRoutes');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -52,7 +53,7 @@ app.use(express.static(path.join(__dirname, 'src', 'public')));
 
 app.use('/', viewsRoutes);
 
-// app.use('/tours', tourRoutes);
+app.use('/tour-management', tourRoutes);
 
 // app.use('/register', checkout, registerRoutes);
 
