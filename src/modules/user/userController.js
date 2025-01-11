@@ -24,7 +24,7 @@ class userController {
             let users = await userService.getAllUsers();
             res.status(200).json({
                 success: true,
-                users,
+                users: users,
             });
         }
         catch (error) {
@@ -36,12 +36,13 @@ class userController {
         }
     }
 
-    static async filterUsers(name_email) {
+    static async filterUsers(req, res) {
         try {
+            const name_email = req.params.name_email;
             let users = await userService.filterUsers(name_email);
             res.status(200).json({
                 success: true,
-                users,
+                users: users,
             })
         }
         catch (error) {

@@ -8,105 +8,57 @@ let users;
 
 async function fetchUsers() {
     try {
-        const response = await fetch('/handle');
+        const response = await fetch('/accountManagement/getAllUsers');
         const data = await response.json();
         users = data.users;
-        console.log(users);
+        //console.log(users);
         displayUserList(users);
     } catch (error) {
         console.error('Error fetching users:', error);
     }
-}
+};
 
-fetchUsers();
+searchButton.addEventListener('click', async function () {
 
-// searchButton.addEventListener('click', async function () {
+    const searchItem = searchInput.value;
 
-//     const searchItem = searchInput.value;
+    try {
+        const response = await fetch(`/accountManagement/getFilter/${searchItem}`);
+        const data = await response.json();
+        users = data.users;
+        console.log(users);
+        displayUserList(users);
+    }
+    catch (error) {
+        console.error('Error fetching users:', error);
+    }
 
-
-
-// });
-
-
-
-// function getUsersList(){
-
-
-// }
-
-// function sortAndDisplayUsers(){
-
-//     const sortByValue = sortBy.value;
-//     const orderValue = order.value;
-
-//     const sortedUsers = users.slice();
-//     sortedUsers.sort((a, b) => {
-//         if (sortByValue === 'name') {
-//             return orderValue === 'asc' ? a.user_name.localeCompare(b.user_name) : b.user_name.localeCompare(a.user_name);
-//         }
-//         else if (sortByValue === 'email') {
-//             return orderValue === 'asc' ? a.email.localeCompare(b.email) : b.email.localeCompare(a.email);
-//         }
-//         return 0;
-//     });
-
-//     displayUserList(sortedUsers)
-// }
-
-// async function loadUserList() {
-
-//     const sortByValue = sortBy.value;
-//     const orderValue = order.value;
-
-//     try {
-//         const url = new URL('/api/filterUsers', window.location.origin);
-
-//         // Thêm các tham số sắp xếp và tìm kiếm vào URL
-//         url.searchParams.set('sortBy', sortByValue);
-//         url.searchParams.set('order', orderValue);
-//         if (searchItem) {
-//             url.searchParams.set('search', searchItem);
-//         }
-
-//         // const response = await fetch(url);
-//         // if (!response.ok) {
-//         //     throw new Error('Failed to fetch users');
-//         // }
-
-//         // const data = await response.json();
-//         displayUserList(data.users);
-//     } catch (error) {
-//         console.error('Error loading users:', error);
-//     }
-
-// }
+});
 
 async function loadUserList() {
 
     const sortByValue = sortBy.value;
     const orderValue = order.value;
-    const searchItem = searchInput.value;
 
     try {
-        // Xây dựng URL với các tham số tìm kiếm và sắp xếp
-        const url = new URL('/api/filterUsers', window.location.origin);
 
-        // Thêm các tham số sắp xếp, tìm kiếm vào URL
-        url.searchParams.set('sortBy', sortByValue);
-        url.searchParams.set('order', orderValue);
-        if (searchItem) {
-            url.searchParams.set('search', searchItem);
+        if (orderValue == 'asc') {
+            if (sortByValue === 'name') {
+                users.sort((a, b) => a.user_name.localeCompare(b.user_name));
+            } else if (sortByValue === 'email') {
+                users.sort((a, b) => a.email.localeCompare(b.email));
+            }
+        }
+        else {
+            if (sortByValue === 'name') {
+                users.sort((a, b) => b.user_name.localeCompare(a.user_name));
+            } else if (sortByValue === 'email') {
+                users.sort((a, b) => b.email.localeCompare(a.email));
+            }
         }
 
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error('Failed to fetch users');
-        }
-
-        const data = await response.json();
-
-        displayUserList(data.users);
+        console.log(users);
+        displayUserList(users);
     } catch (error) {
         console.error('Error loading users:', error);
     }
@@ -119,6 +71,8 @@ sortBy.addEventListener('change', function () {
 order.addEventListener('change', function () {
     loadUserList();
 });
+
+//---------------------------------------
 
 function displayUserList(users) {
 
@@ -146,6 +100,87 @@ function displayUserList(users) {
             userListElement.appendChild(row);
         });
     }
+
+    const modal = document.getElementById('modal');
+    const openModal = document.querySelectorAll('#open_dialog');
+    const closeModal = document.getElementById('close_dialog');
+    const banButton = document.getElementById('ban_button');
+    let is_banned;
+    let userId;
+
+    openModal.forEach(button => {
+        button.addEventListener('click', function () {
+            // Lấy thông tin từ các thuộc tính data-* của dòng (tr)
+            const row = button.closest('tr');
+            userId = row.getAttribute('data-user-id');
+            const userName = row.getAttribute('data-user-name');
+            const email = row.getAttribute('data-email');
+            const roleName = row.getAttribute('data-role-name');
+            is_banned = row.getAttribute('data-isbanned') === "true";
+
+            // Cập nhật thông tin người dùng vào modal
+            document.getElementById('user_id').textContent = userId;
+            document.getElementById('user_name').textContent = userName;
+            document.getElementById('email').textContent = email;
+            document.getElementById('role_id').textContent = roleName;
+
+            if (roleName === 'admin') {
+                banButton.style.display = 'none';
+            } else {
+                if (is_banned == false) {
+                    banButton.textContent = "ban";
+                    banButton.classList.remove('bg-green-500', 'hover:bg-green-400');
+                    banButton.classList.add('bg-red-600', 'hover:bg-red-700'); // đổi màu khi ban
+                }
+                else {
+                    banButton.textContent = "unban";
+                    banButton.classList.remove('bg-red-600', 'hover:bg-red-700');
+                    banButton.classList.add('bg-green-500', 'hover:bg-green-400'); // Đổi màu khi unban
+                }
+                banButton.style.display = 'inline-block';
+            }
+
+            // Hiển thị modal
+            modal.showModal();
+        });
+    });
+
+    closeModal.addEventListener('click', function () {
+        modal.close();
+    });
+
+    banButton.addEventListener('click', async function () {
+
+        if (is_banned == false) {
+            banButton.textContent = "unban";
+            banButton.classList.remove('bg-red-600', 'hover:bg-red-700');
+            banButton.classList.add('bg-green-500', 'hover:bg-green-400'); // Đổi màu khi unban
+            is_banned = true;
+        }
+        else {
+            banButton.textContent = "ban";
+            banButton.classList.remove('bg-green-500', 'hover:bg-green-400');
+            banButton.classList.add('bg-red-600', 'hover:bg-red-700'); // đổi màu khi ban
+            is_banned = false;
+        }
+
+        //console.log(userId);
+        const response = await fetch('/accountManagement', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId, isBanned: JSON.parse(is_banned) })
+        });
+
+        const data = await response.json();
+        alert(data.message);
+
+        const row = document.querySelector(`[data-user-id='${userId}']`);
+        row.setAttribute('data-isbanned', is_banned);
+
+    });
+
 }
 
 function displayPagination(pagination) {
@@ -174,82 +209,4 @@ function displayPagination(pagination) {
     }
 }
 
-const modal = document.getElementById('modal');
-const openModal = document.querySelectorAll('#open_dialog');
-const closeModal = document.getElementById('close_dialog');
-const banButton = document.getElementById('ban_button');
-let is_banned;
-let userId;
-
-openModal.forEach(button => {
-    button.addEventListener('click', function () {
-        // Lấy thông tin từ các thuộc tính data-* của dòng (tr)
-        const row = button.closest('tr');
-        userId = row.getAttribute('data-user-id');
-        const userName = row.getAttribute('data-user-name');
-        const email = row.getAttribute('data-email');
-        const roleName = row.getAttribute('data-role-name');
-        is_banned = row.getAttribute('data-isbanned') === "true";
-
-        // Cập nhật thông tin người dùng vào modal
-        document.getElementById('user_id').textContent = userId;
-        document.getElementById('user_name').textContent = userName;
-        document.getElementById('email').textContent = email;
-        document.getElementById('role_id').textContent = roleName;
-
-        if (roleName === 'admin') {
-            banButton.style.display = 'none';
-        } else {
-            if (is_banned == false) {
-                banButton.textContent = "ban";
-                banButton.classList.remove('bg-green-500', 'hover:bg-green-400');
-                banButton.classList.add('bg-red-600', 'hover:bg-red-700'); // đổi màu khi ban
-            }
-            else {
-                banButton.textContent = "unban";
-                banButton.classList.remove('bg-red-600', 'hover:bg-red-700');
-                banButton.classList.add('bg-green-500', 'hover:bg-green-400'); // Đổi màu khi unban
-            }
-            banButton.style.display = 'inline-block';
-        }
-
-        // Hiển thị modal
-        modal.showModal();
-    });
-});
-
-closeModal.addEventListener('click', function () {
-    modal.close();
-});
-
-banButton.addEventListener('click', async function () {
-
-    if (is_banned == false) {
-        banButton.textContent = "unban";
-        banButton.classList.remove('bg-red-600', 'hover:bg-red-700');
-        banButton.classList.add('bg-green-500', 'hover:bg-green-400'); // Đổi màu khi unban
-        is_banned = true;
-    }
-    else {
-        banButton.textContent = "ban";
-        banButton.classList.remove('bg-green-500', 'hover:bg-green-400');
-        banButton.classList.add('bg-red-600', 'hover:bg-red-700'); // đổi màu khi ban
-        is_banned = false;
-    }
-
-    //console.log(userId);
-    const response = await fetch('/accountManagement', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId, isBanned: JSON.parse(is_banned) })
-    });
-
-    const data = await response.json();
-    alert(data.message);
-
-    const row = document.querySelector(`[data-user-id='${userId}']`);
-    row.setAttribute('data-isbanned', is_banned);
-
-});
+document.addEventListener('DOMContentLoaded', fetchUsers);
