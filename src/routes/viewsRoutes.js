@@ -25,20 +25,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/accountManagement', async (req, res) => {
-    try {
-        const users = await userService.getAllUsers();
-
-        res.render('accountManagement', {
-            layout: 'main',
-            users,
-            title: 'Account Manage',
-        });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
 
 
 module.exports = router;

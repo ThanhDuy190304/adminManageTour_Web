@@ -56,12 +56,11 @@ app.set('views', path.join(__dirname, 'src', 'views'))
 app.use(express.static(path.join(__dirname, 'src', 'public')));
 
 app.use('/', requireAdmin, viewsRoutes);
-app.use('/accountManagement', requireAdmin, accountManagement);
-app.use('/logout', requireAdmin, logoutRoutes);
-app.use('/orderManagement', requireAdmin, orderManagementRoutes);
-app.use('/dashboard', requireAdmin, dashboard);
-
-app.use('/tour-management', requireAdmin, tourRoutes);
+app.use('/accountManagement', accountManagement);
+app.use('/logout', logoutRoutes);
+app.use('/orderManagement', orderManagementRoutes);
+app.use('/dashboard', dashboard);
+app.use('/tour-management', tourRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
