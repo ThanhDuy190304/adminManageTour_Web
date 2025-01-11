@@ -51,13 +51,13 @@
       <h4 class="text-blue-700 text-xl font-bold mb-4">Top Attraction</h4>
       <div class="grid grid-cols-4 gap-4">
         {{#each bestTour}}
-          <div class="border rounded-lg shadow p-4">
-            <div class="overflow-hidden rounded-t-lg">
-              <img src="{{this.img_url}}" alt="Attraction" class="w-full h-48 object-cover" />
-            </div>
-            <div class="text-lg font-bold mt-2">{{this.title}}</div>
-            <div class="text-gray-600 mt-1">Rating: {{this.rate}}</div>
+        <div class="border rounded-lg shadow p-4">
+          <div class="overflow-hidden rounded-t-lg">
+            <img src="{{this.img_url}}" alt="Attraction" class="w-full h-48 object-cover" />
           </div>
+          <div class="text-lg font-bold mt-2">{{this.title}}</div>
+          <div class="text-gray-600 mt-1">Rating: {{this.rate}}</div>
+        </div>
         {{/each}}
       </div>
     </div>

@@ -1,0 +1,30 @@
+.scrollable-container {
+    max-height: 400px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    /* Cho thanh cuộn mỏng */
+    scrollbar-color: gray #1F2937;
+    /* Màu sắc của thumb và track */
+}
+
+/* Dành cho các trình duyệt Webkit như Chrome, Safari */
+.scrollable-container::-webkit-scrollbar {
+    width: 10px;
+    background-color: #1F2937;
+    /* Chiều rộng và màu nền thanh cuộn */
+}
+
+.scrollable-container::-webkit-scrollbar-thumb {
+    background-color: #000000;
+    /* Màu sắc của thumb */
+    border-radius: 10px;
+    /* Tạo góc bo tròn cho thumb */
+    border: 2px solid #555555;
+    /* Thêm viền cho thumb */
+}
+
+.scrollable-container::-webkit-scrollbar-track {
+    background-color: #1F2937;
+    border-radius: 10px;
+    /* Tạo góc bo tròn cho track */
+}

@@ -2,31 +2,33 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=3.0">
-    <title>{{title}}</title>
-    <meta name="description" content="Manage Tour">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=3.0">
+  <title>{{title}}</title>
+  <meta name="description" content="Manage Tour">
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700,900">
-    <link rel="stylesheet" href="/css/output.css">
-    {{!-- <link rel="stylesheet" href="/css/style.css"> --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
-
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700,900">
+  <link rel="stylesheet" href="/css/output.css">
+  {{!--
+  <link rel="stylesheet" href="/css/style.css"> --}}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/nav.css">
 
 </head>
 
 <body class="overflow-x-hidden">
-    <body class="overflow-x-hidden">
-  <div class="flex h-screen">
-    <!-- Sidebar/Header -->
-    {{> header}}
 
-    <!-- Main Content -->
-    <main class="flex-1 p-8 bg-gray-100 overflow-y-auto">
-      {{{body}}}
-    </main>
-  </div>
-</body>
+  <body class="overflow-x-hidden">
+    <div class="flex h-screen">
+      <!-- Sidebar/Header -->
+      {{> header}}
+
+      <!-- Main Content -->
+      <main class="flex-1 p-8 bg-gray-100 overflow-y-auto">
+        {{{body}}}
+      </main>
+    </div>
+  </body>
 
 </body>
 
