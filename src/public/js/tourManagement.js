@@ -109,6 +109,10 @@ function applyFilters() {
 
             // Hiển thị các nút phân trang
             renderPageButtons(data.totalPages);
+            if(currentPage>data.totalPages){
+                currentPage = 1;
+                applyFilters()
+            }
             totalpage = data.totalPages;
             // Cập nhật URL trên trình duyệt mà không tải lại trang
             updateURL(queryParams);
@@ -128,8 +132,7 @@ function renderHTML(paginatedTours) {
             }
             paginatedTours.forEach(tour => {
                 html += `
-                <a href="/tours/${tour.tour_id}" class="w-full max-w-xs flex-shrink-0 mx-auto">
-                    <div class="flex flex-col justify-between bg-white rounded-lg shadow-lg overflow-hidden h-full transition-transform duration-300 ease-in-out hover:scale-105">
+                    <div class="w-full max-w-xs flex-shrink-0 mx-auto flex flex-col justify-between bg-white rounded-lg shadow-lg overflow-hidden h-full transition-transform duration-300 ease-in-out hover:scale-105">
                         <div class="flex flex-col h-full">
                             <!-- Giảm kích thước hình ảnh -->
                             <img src="${tour.img_url}" alt="" class="w-full h-36 object-cover rounded-t-lg">
@@ -153,11 +156,9 @@ function renderHTML(paginatedTours) {
                                 <i class="fa-solid fa-star text-yellow-500"></i>
                                 <i class="fa-solid fa-star text-yellow-500"></i>
                             </div>
-                            <button type="button" class="self-end px-4 py-2 bg-green-900 text-white rounded-full hover:bg-green-950 transition-colors duration-200" value="${tour.tour_id}" onclick="deleteTour(this)">Delete</button>
-                            <button type="button" class="self-end px-4 py-2 bg-green-900 text-white rounded-full hover:bg-green-950 transition-colors duration-200" value="${tour.tour_id}" onclick="updateTour(this)">Update</button>
+                            <button type="button" id="udateTourButton" class="self-end px-4 py-2 bg-green-900 text-white rounded-full hover:bg-green-950 transition-colors duration-200" value="${tour.tour_id}" onclick="handleUpdateClick(this)">Update</button>
                         </div>
                     </div>
-                </a>
                 `;
             });
     tourList.innerHTML = html;  // Thay thế nội dung hiện tại bằng HTML mới
@@ -248,16 +249,24 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-let currentTourId = null;  // Dùng để lưu ID tour khi thực hiện Update
+let currentTourId = null;
 
 // Hiển thị modal khi người dùng click vào nút Add
 document.getElementById('addTourButton').addEventListener('click', function() {
     showTourModal('add');  // Hiển thị modal để thêm tour mới
 });
 
-document.getElementById('udateTourButton').addEventListener('click', function() {
-    showTourModal('update');  // Hiển thị modal để thêm tour mới
-});
+function handleUpdateClick(button) {
+    const tourId = button.value;
+    // Gửi yêu cầu fetch tới API để lấy dữ liệu chi tiết của tour
+    fetch(`/tour-management/getTourById/${tourId}`)
+        .then(response => response.json())
+        .then(tourData => {
+            // Hiển thị modal với dữ liệu tour lấy từ cơ sở dữ liệu
+            showTourModal('update', tourData, tourId);
+        })
+        .catch(error => console.error('Error fetching tour data:', error));
+}
 
 // Đóng modal
 document.getElementById('closeModalButton').addEventListener('click', function() {
@@ -265,21 +274,23 @@ document.getElementById('closeModalButton').addEventListener('click', function()
 });
 
 // Hiển thị modal với form trống để thêm tour mới hoặc với thông tin tour cũ để cập nhật
-function showTourModal(action, tourData = null) {
+function showTourModal(action, tourData = null, tourId = null) {
     const modalTitle = document.getElementById('modalTitle');
     const form = document.getElementById('tourForm');
-
     if (action === 'add') {
         modalTitle.textContent = 'Add New Tour';
         form.reset();
-        currentTourId = null;  // Set lại currentTourId khi thêm tour mới
     } else if (action === 'update') {
         modalTitle.textContent = 'Update Tour';
-        document.getElementById('tourTitle').value = tourData.title;
-        document.getElementById('tourLocation').value = tourData.location;
-        document.getElementById('tourPrice').value = tourData.price;
-        document.getElementById('tourDescription').value = tourData.description;
-        currentTourId = tourData.tour_id;  // Set currentTourId khi cập nhật tour
+        document.getElementById('tourTitle').value = tourData.title || '';
+        document.getElementById('tourBrief').value = tourData.brief || '';
+        document.getElementById('tourDetail').value = tourData.details || '';
+        document.getElementById('tourLocation').value = tourData.locationName || '';
+        document.getElementById('tourPrice').value = tourData.prices || '';
+        document.getElementById('tourRate').value = tourData.rate || '';
+        document.getElementById('tourVoucher').value = tourData.voucher || '';
+        // document.getElementById('tourManufactory').value = tourData.manufactory || '';
+        currentTourId = tourId;
     }
 
     document.getElementById('tourModal').classList.remove('hidden');
@@ -295,20 +306,27 @@ document.getElementById('tourForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
     const title = document.getElementById('tourTitle').value;
+    const brief = document.getElementById('tourBrief').value;
+    const detail = document.getElementById('tourDetail').value;
     const location = document.getElementById('tourLocation').value;
     const price = document.getElementById('tourPrice').value;
-    const description = document.getElementById('tourDescription').value;
+    const rate = document.getElementById('tourRate').value;
+    const voucher = document.getElementById('tourVoucher').value;
 
     const tourData = {
         title,
+        brief,
+        detail,
         location,
         price,
-        description
+        rate,
+        voucher,
     };
 
     if (currentTourId) {
         // Nếu có currentTourId, thực hiện cập nhật tour
         updateTourAPI(currentTourId, tourData);
+        currentTourId = null;
     } else {
         // Nếu không có currentTourId, thực hiện thêm tour mới
         addTourAPI(tourData);
@@ -317,7 +335,7 @@ document.getElementById('tourForm').addEventListener('submit', function(event) {
 
 // Hàm gọi API để thêm tour mới
 function addTourAPI(tourData) {
-    fetch('/tour-management/api', {
+    fetch('/tour-management/addTourId', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -339,7 +357,7 @@ function addTourAPI(tourData) {
 
 // Hàm gọi API để cập nhật thông tin tour
 function updateTourAPI(tourId, tourData) {
-    fetch(`/tour-management/api/${tourId}`, {
+    fetch(`/tour-management/UpdateTour/${tourId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
