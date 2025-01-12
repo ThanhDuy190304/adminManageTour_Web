@@ -12,7 +12,34 @@ class tourModel {
         }
         return null;
     }
-
+    static async addTourId(tourID,title,brief,detail,location,price,rate,voucher) {
+        const query = `Insert into tours(tour_id, title, brief, details, location_id, prices, rate, voucher)
+                        values ($1,$2,$3,$4,(select location_id
+                                        from locations
+                                        where location_name = $5),$6,$7,$8);
+                        `;
+        console.log(query)
+        const query2 = `Insert into tour_images(img_id, tour_id, img_url)
+                        values (1, $1, 'https://i.imgur.com/oxw2R9P.png')`
+        try {
+            await db.query(query, [tourID,title,brief,detail,location,price,rate,voucher]);
+            await db.query(query2, [tourID]);
+        } catch (err) {
+            console.log("Error in tourModel", err);
+        }
+        return null;
+    }
+    static async getNextID() {
+        const query = `SELECT CONCAT('t', LPAD((CAST(SUBSTRING(MAX(tour_id) FROM 2) AS INTEGER) + 1)::TEXT, 3, '0')) AS next_tour_id
+                        FROM tours;`;
+        try {
+            const result = await db.query(query);
+            return result.rows[0].next_tour_id;
+        } catch (err) {
+            console.log("Error in tourModel", err);
+        }
+        return null;
+    }
 	static async getTours(page, searchQuery, sort, locationQuery, companyQuery) {
 		if (!Array.isArray(locationQuery)) { locationQuery = [locationQuery]; }
         if (!Array.isArray(companyQuery)) { companyQuery = [companyQuery]; }
@@ -62,6 +89,7 @@ class tourModel {
             ${filterSort}
             LIMIT 6 OFFSET ${(page - 1) * 6}
         `;
+        console.log(dataQuery)
 		try {
 			const paginatedTours = await db.query(dataQuery);
 			const totalPages = await db.query(countQuery);
@@ -127,57 +155,59 @@ class tourModel {
 		}
 	}
 
-	// static async getTourByID(tour_id) {
-	// 	const query = `
-    //         SELECT t.tour_id, t.title, t.brief, t.details, t.prices, t.rate, t.voucher,
-    //         img_urls.img_array, 
-    //         ARRAY_AGG(
-    //             JSON_BUILD_OBJECT(  
-    //                 'schedule_id', dt.detail_tour_id,
-    //                 'status', dt.status,
-    //                 'available_quantity', 
-    //                     CASE
-    //                         WHEN (dt.max_quantity - dt.booked_quantity) > 0 THEN (dt.max_quantity - dt.booked_quantity)
-    //                         ELSE 0
-    //                     END,
-    //                 'tour_date', dt.tour_date
-    //             )
-    //         ) AS schedules_tour
-    //         FROM tours t
-    //         LEFT JOIN (
-    //             SELECT tour_id, ARRAY_AGG(img_url) AS img_array
-    //             FROM tour_images
-    //             GROUP BY tour_id
-    //         ) img_urls ON t.tour_id = img_urls.tour_id
-    //         LEFT JOIN detail_tours dt ON t.tour_id = dt.tour_id
-    //         WHERE t.tour_id = $1
-    //         GROUP BY t.tour_id, img_urls.img_array
-    //         LIMIT 1;
-    //     `;
-	// 	try {
-	// 		const result = await db.query(query, [tour_id]);
-	// 		if (result.rows[0]) {
-	// 			const tourData = result.rows[0];
-	// 			return {
-	// 				tourId: tourData.tour_id,
-	// 				title: tourData.title,
-	// 				brief: tourData.brief,
-	// 				details: tourData.details,
-	// 				locationId: tourData.location_id,
-	// 				prices: tourData.prices,
-	// 				rate: tourData.rate,
-	// 				voucher: tourData.voucher,
-	// 				imgArray: tourData.img_array || [],
-	// 				schedulesTour: tourData.schedules_tour || []
-	// 			};
-	// 		} else {
-	// 			throw new Error('Tour not found');
-	// 		}
-	// 	} catch (error) {
-	// 		console.error(error.message);
-	// 		throw error;
-	// 	}
-	// }
+	static async getTourByID(tour_id) {
+		const query = `
+            SELECT t.tour_id, t.title, t.brief, t.details, t.prices, t.rate, t.voucher, l.location_name,l.location_id,
+            img_urls.img_array, 
+            ARRAY_AGG(
+                JSON_BUILD_OBJECT(  
+                    'schedule_id', dt.detail_tour_id,
+                    'status', dt.status,
+                    'available_quantity', 
+                        CASE
+                            WHEN (dt.max_quantity - dt.booked_quantity) > 0 THEN (dt.max_quantity - dt.booked_quantity)
+                            ELSE 0
+                        END,
+                    'tour_date', dt.tour_date
+                )
+            ) AS schedules_tour
+            FROM tours t
+            LEFT JOIN (
+                SELECT tour_id, ARRAY_AGG(img_url) AS img_array
+                FROM tour_images
+                GROUP BY tour_id
+            ) img_urls ON t.tour_id = img_urls.tour_id
+            LEFT JOIN detail_tours dt ON t.tour_id = dt.tour_id
+            LEFT JOIN locations l ON l.location_id = t.location_id
+            WHERE t.tour_id = $1
+            GROUP BY t.tour_id, img_urls.img_array, l.location_name, l.location_id
+            LIMIT 1;
+        `;
+		try {
+			const result = await db.query(query, [tour_id]);
+			if (result.rows[0]) {
+				const tourData = result.rows[0];
+				return {
+					tourId: tourData.tour_id,
+					title: tourData.title,
+					brief: tourData.brief,
+					details: tourData.details,
+					locationId: tourData.location_id,
+                    locationName: tourData.location_name,
+					prices: tourData.prices,
+					rate: tourData.rate,
+					voucher: tourData.voucher,
+					imgArray: tourData.img_array || [],
+					schedulesTour: tourData.schedules_tour || []
+				};
+			} else {
+				throw new Error('Tour not found');
+			}
+		} catch (error) {
+			console.error(error.message);
+			throw error;
+		}
+	}
 
 	// static async getTourScheduleDetail(tourId, scheduleId) {
 	// 	const query = `
