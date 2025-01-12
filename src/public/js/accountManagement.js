@@ -3,74 +3,94 @@ const searchButton = document.getElementById('searchButton');
 const userListElement = document.getElementById('userList');
 const sortBy = document.getElementById('sortBy');
 const order = document.getElementById('order');
+const previousButton = document.getElementById('previousButton');
+const nextButton = document.getElementById('nextButton');
+const currentPage = document.getElementById('currentPage');
 
 let users;
+let pages;
+let currentPageNumber = 1;
 
-async function fetchUsers() {
-    try {
-        const response = await fetch('/accountManagement/getAllUsers');
-        const data = await response.json();
-        users = data.users;
-        //console.log(users);
-        displayUserList(users);
-    } catch (error) {
-        console.error('Error fetching users:', error);
-    }
-};
-
-searchButton.addEventListener('click', async function () {
-
-    const searchItem = searchInput.value;
-
-    try {
-        const response = await fetch(`/accountManagement/getFilter/${searchItem}`);
-        const data = await response.json();
-        users = data.users;
-        console.log(users);
-        displayUserList(users);
-    }
-    catch (error) {
-        console.error('Error fetching users:', error);
-    }
-
-});
-
-async function loadUserList() {
-
-    const sortByValue = sortBy.value;
-    const orderValue = order.value;
-
-    try {
-
-        if (orderValue == 'asc') {
-            if (sortByValue === 'name') {
-                users.sort((a, b) => a.user_name.localeCompare(b.user_name));
-            } else if (sortByValue === 'email') {
-                users.sort((a, b) => a.email.localeCompare(b.email));
-            }
-        }
-        else {
-            if (sortByValue === 'name') {
-                users.sort((a, b) => b.user_name.localeCompare(a.user_name));
-            } else if (sortByValue === 'email') {
-                users.sort((a, b) => b.email.localeCompare(a.email));
-            }
-        }
-
-        console.log(users);
-        displayUserList(users);
-    } catch (error) {
-        console.error('Error loading users:', error);
-    }
+async function pageLoad() {
+    loadUserList(currentPageNumber);
 }
 
+searchButton.addEventListener('click', async function () {
+    currentPage.value = '1';
+    currentPageNumber = 1;
+    loadUserList(currentPageNumber);
+});
+
 sortBy.addEventListener('change', function () {
-    loadUserList();
+    currentPage.value = '1';
+    currentPageNumber = 1;
+    loadUserList(currentPageNumber);
 });
 
 order.addEventListener('change', function () {
-    loadUserList();
+    currentPage.value = '1';
+    currentPageNumber = 1;
+    loadUserList(currentPageNumber);
 });
+
+nextButton.addEventListener('click', function () {
+    if (currentPageNumber < pages) {
+        currentPageNumber = currentPageNumber + 1;
+        currentPage.value = currentPageNumber;
+        loadUserList(currentPageNumber);
+    }
+})
+
+previousButton.addEventListener('click', function () {
+    if (currentPageNumber > 1) {
+        currentPageNumber = currentPageNumber - 1;
+        currentPage.value = currentPageNumber;
+        loadUserList(currentPageNumber);
+    }
+})
+
+async function loadUserList(page) {
+    const sortByValue = sortBy.value;
+    const orderValue = order.value;
+    const searchItem = searchInput.value;
+    try {
+        if (!searchItem) {
+            const response2 = await fetch('/accountManagement/getNumberUsers');
+            const response1 = await fetch(`/accountManagement/getAllUsers/${sortByValue}/${orderValue}/${page}`);
+
+            const data1 = await response1.json();
+            users = data1.users;
+            displayUserList(users);
+
+            const data2 = await response2.json();
+            pages = data2.numberUser.total;
+            console.log(data2);
+            pages = Math.ceil(pages / 2);
+            console.log(pages);
+            numPage.textContent = `/${pages}`;
+            currentPage.value = currentPageNumber;
+        }
+        else {
+            const response2 = await fetch(`/accountManagement/getCountFilterUsers/${searchItem}`);
+            const response1 = await fetch(`/accountManagement/getFilter/${searchItem}/${sortByValue}/${orderValue}/${page}`);
+
+            const data1 = await response1.json();
+            users = data1.users;
+            displayUserList(users);
+
+            const data2 = await response2.json();
+            pages = data2.countUsers.count_users;
+            console.log(data2);
+            pages = Math.ceil(pages / 2);
+            console.log(pages);
+            numPage.textContent = `/${pages}`;
+            currentPage.value = currentPageNumber;
+        }
+    }
+    catch (error) {
+        console.error('Error loading users:', error);
+    }
+}
 
 //---------------------------------------
 
@@ -209,4 +229,4 @@ function displayPagination(pagination) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', fetchUsers);
+document.addEventListener('DOMContentLoaded', pageLoad);

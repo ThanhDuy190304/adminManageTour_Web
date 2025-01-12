@@ -19,9 +19,28 @@ class userController {
         }
     }
 
+    static async getCountFilterUser(req, res) {
+        try {
+            const name_email = req.params.name_email;
+            let countUsers = await userService.getCountFilterUser(name_email);
+            res.status(200).json({
+                success: true,
+                countUsers: countUsers,
+            });
+        }
+        catch (error) {
+            console.log("Error in getCountFilterUser of userController: ", error);
+            res.status(500).json({
+                success: false,
+                message: 'Error in getCountFilterUser of userController',
+            })
+        }
+    }
+
     static async getAllUsers(req, res) {
         try {
-            let users = await userService.getAllUsers();
+            const {sortBy, order, page} = req.params;
+            let users = await userService.getAllUsers(sortBy, order, page);
             res.status(200).json({
                 success: true,
                 users: users,
@@ -38,8 +57,8 @@ class userController {
 
     static async filterUsers(req, res) {
         try {
-            const name_email = req.params.name_email;
-            let users = await userService.filterUsers(name_email);
+            const {name_email, sortBy, order, page} = req.params;
+            let users = await userService.filterUsers(name_email, sortBy, order, page);
             res.status(200).json({
                 success: true,
                 users: users,
