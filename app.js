@@ -1,6 +1,8 @@
 const express = require('express');
+const cors = require('cors');
 const exphbs = require('express-handlebars');
 const path = require('path');
+require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const { authenticateToken, requireAdmin } = require('./src/middleware/authMiddleware');
 const app = express();
@@ -40,6 +42,10 @@ const logoutRoutes = require('./src/routes/logoutRoutes');
 const orderManagementRoutes = require('./src/routes/orderManagementRoutes');
 const reportRoutes = require('./src/routes/reportRoutes');
 
+app.use(cors({
+    origin: ['http://localhost:3000', process.env.TOURIST_PATH],
+    credentials: true
+}));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
