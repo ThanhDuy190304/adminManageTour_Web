@@ -44,8 +44,7 @@ function requireAdmin(req, res, next) {
     if (res.locals.user && res.locals.user.userRole === 1) {
         return next();
     }
-    const touristPath = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : process.env.TOURIST_PATH;
-    return res.redirect(touristPath);
+    return res.render('no-access', { message: 'You do not have permission to access this page.' });
 }
 
 module.exports = { authenticateToken, requireAdmin };
