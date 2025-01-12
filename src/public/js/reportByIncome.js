@@ -2,7 +2,6 @@ const venueList = document.getElementById('venueList');
 const type = document.getElementById('type');
 const sortBy = document.getElementById('sortBy');
 const order = document.getElementById('order');
-const viewButton = document.getElementById('viewButton');
 
 let venue = [];
 
@@ -10,7 +9,7 @@ async function fetchMoneyByYear() {
     const sortByValue = sortBy.value;
     const orderValue = order.value;
     try {
-        const response = await fetch(`/report/StatisticMoneyByYear/${sortByValue}/${orderValue}`);
+        const response = await fetch(`/reportByIncome/StatisticMoneyByYear/${sortByValue}/${orderValue}`);
         const data = await response.json();
         venue = data.venue;
         displayVenueList(venue);
@@ -23,7 +22,7 @@ async function fetchMoneyByMonth() {
     const sortByValue = sortBy.value;
     const orderValue = order.value;
     try {
-        const response = await fetch(`/report/StatisticMoneyByMonth/${sortByValue}/${orderValue}`);
+        const response = await fetch(`/reportByIncome/StatisticMoneyByMonth/${sortByValue}/${orderValue}`);
         const data = await response.json();
         venue = data.venue;
         displayVenueList(venue);
@@ -37,17 +36,17 @@ async function fetchMoneyByDay() {
     const sortByValue = sortBy.value;
     const orderValue = order.value;
     try {
-        const response = await fetch(`/report/StatisticMoneyByDay/${sortByValue}/${orderValue}`);
+        const response = await fetch(`/reportByIncome/StatisticMoneyByDay/${sortByValue}/${orderValue}`);
         const data = await response.json();
         venue = data.venue;
         displayVenueList(venue);
     }
     catch (error) {
-        console.error('Error fetchMoneyByMonth: ', error);
+        console.error('Error fetchMoneyByDay: ', error);
     }
 }
 
-viewButton.addEventListener('click', async function(){
+async function readyToFetch(){
     const typeSelector = type.value;
     if (typeSelector == 'daySelector') {
         fetchMoneyByDay();
@@ -58,7 +57,14 @@ viewButton.addEventListener('click', async function(){
     else if (typeSelector == 'yearSelector') {
         fetchMoneyByYear();
     }
+}
+
+type.addEventListener('change', async function(){
+    readyToFetch();
 })
+
+sortBy.addEventListener('change', readyToFetch);
+order.addEventListener('change', readyToFetch);
 
 
 function displayVenueList(venue) {

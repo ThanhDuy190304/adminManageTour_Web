@@ -1,12 +1,12 @@
-const reportModel = require("./reportModel");
+const reportByIncomeModel = require("./reportByIncomeModel");
 const { format } = require('date-fns');
 const { ca } = require("date-fns/locale");
 
-class reportService {
+class reportByIncomeService {
 
     static async moneyStatisticByYear(sortByValue, orderValue) {
         try {
-            const result = await reportModel.moneyStatisticByYear(sortByValue, orderValue);
+            const result = await reportByIncomeModel.moneyStatisticByYear(sortByValue, orderValue);
             return result;
         }
         catch (error) {
@@ -17,7 +17,7 @@ class reportService {
 
     static async moneyStatisticByMonth(sortByValue, orderValue){
         try{
-            const result = await reportModel.moneyStatisticByMonth(sortByValue, orderValue);
+            const result = await reportByIncomeModel.moneyStatisticByMonth(sortByValue, orderValue);
             return result;
         }
         catch(error){
@@ -28,7 +28,7 @@ class reportService {
 
     static async moneyStatisticByDay(sortByValue, orderValue){
         try{
-            const result = await reportModel.moneyStatisticByDay(sortByValue, orderValue);
+            const result = await reportByIncomeModel.moneyStatisticByDay(sortByValue, orderValue);
             return result;
         }
         catch(error){
@@ -39,4 +39,4 @@ class reportService {
 
 }
 
-module.exports = reportService;
+module.exports = reportByIncomeService;

@@ -1,5 +1,8 @@
 <section>
-
+    <a href="/reportByTour"
+        class="ml-auto p-5 mb-4 text-lg hover:bg-blue-700 rounded-lg focus:bg-blue-700 flex items-center">
+        <span>ReportsByTour</span>
+    </a>
     <div class="flex mb-4">
         <div class="mr-4">
             <label for="type" class="text-sm font-medium text-gray-700">Venue by</label>
@@ -19,13 +22,10 @@
         <div class="mr-4">
             <label for="order" class="text-sm font-medium text-gray-700">Order</label>
             <select id="order" class="p-2 border border-gray-300 rounded-lg">
-                <option value="ASC">Ascending</option>
-                <option value="DESC">Descending</option>
+                <option value="ASC">ascending</option>
+                <option value="DESC">descending</option>
             </select>
         </div>
-        <Button>
-            <button id="viewButton" class="m-4 p-3 bg-blue-500 rounded-lg">View</button>
-        </Button>
     </div>
 
     <div class="overflow-x-auto bg-white p-4 rounded-lg shadow-md">
@@ -38,13 +38,13 @@
                     </tr>
                 </thead>
                 <tbody id="venueList">
-                    
+
                 </tbody>
             </table>
         </div>
     </div>
 
-    
+
 
 </section>
-<script src="/js/report.js"></script>
+<script src="/js/reportByIncome.js"></script>

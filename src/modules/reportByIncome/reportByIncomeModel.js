@@ -1,6 +1,6 @@
 const db = require('../../config/db');
 
-class reportModel {
+class reportByIncomeModel {
 
     static async moneyStatisticByYear(sortByValue, orderValue) {
         try {
@@ -79,4 +79,4 @@ class reportModel {
     }
 }
 
-module.exports = reportModel;
+module.exports = reportByIncomeModel;

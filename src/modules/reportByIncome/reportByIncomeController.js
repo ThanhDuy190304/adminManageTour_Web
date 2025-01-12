@@ -1,11 +1,11 @@
-const reportService = require("./reportService");
+const reportByIncomeService = require("./reportByIncomeService");
 
 class reportController {
 
     static async moneyStatisticByYear(req, res){
         try{
             const {sortByValue, orderValue} = req.params;
-            const result = await reportService.moneyStatisticByYear(sortByValue, orderValue);
+            const result = await reportByIncomeService.moneyStatisticByYear(sortByValue, orderValue);
             res.status(200).json({
                 success: true,
                 venue: result,
@@ -23,7 +23,7 @@ class reportController {
     static async moneyStatisticByMonth(req, res){
         try{
             const {sortByValue, orderValue} = req.params;
-            const result = await reportService.moneyStatisticByMonth(sortByValue, orderValue);
+            const result = await reportByIncomeService.moneyStatisticByMonth(sortByValue, orderValue);
             res.status(200).json({
                 success: true,
                 venue: result,
@@ -41,7 +41,7 @@ class reportController {
     static async moneyStatisticByDay(req, res){
         try{
             const {sortByValue, orderValue} = req.params;
-            const result = await reportService.moneyStatisticByDay(sortByValue, orderValue);
+            const result = await reportByIncomeService.moneyStatisticByDay(sortByValue, orderValue);
             res.status(200).json({
                 success: true,
                 venue: result,
