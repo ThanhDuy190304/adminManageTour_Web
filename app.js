@@ -1,6 +1,8 @@
 const express = require('express');
+const cors = require('cors');
 const exphbs = require('express-handlebars');
 const path = require('path');
+require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const { authenticateToken, requireAdmin } = require('./src/middleware/authMiddleware');
 const app = express();
@@ -36,12 +38,15 @@ const tourRoutes = require('./src/routes/tourRoutes');
 
 const dashboard = require('./src/routes/dashboardRoutes');
 const accountManagement = require('./src/routes/accountManagementRoutes');
-const handleAccount = require('./src/routes/handleAccountRoutes');
 const logoutRoutes = require('./src/routes/logoutRoutes');
 const orderManagementRoutes = require('./src/routes/orderManagementRoutes');
 const reportByIncome = require('./src/routes/reportByIncomeRoutes');
 const reportByTour = require('./src/routes/reportByTourRoutes');
 
+app.use(cors({
+    origin: ['http://localhost:3000', process.env.TOURIST_PATH],
+    credentials: true
+}));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 

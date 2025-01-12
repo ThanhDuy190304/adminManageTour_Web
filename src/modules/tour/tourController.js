@@ -28,7 +28,34 @@ class tourController {
             res.status(500).json({ error: err.message });
         }
     }
-
+    static async getTourById(req, res) {
+        const { tourId } = req.params;
+        try {
+            const TourbyID = await tourService.getTourByID(tourId);
+            res.json(TourbyID);
+        } catch (err) {
+            res.status(500).json({ success: false, error: err.message });
+        }
+    }
+    static async addTourId(req, res) {
+        const { title,brief,detail,location,price,rate,voucher} = req.body;
+        try {
+            await tourService.addTourId(title,brief,detail,location,price,rate,voucher);
+            res.status(200).json({ success: true });
+        } catch (err) {
+            res.status(500).json({ success: false, error: err.message });
+        }
+    }
+    static async UpdateTour(req, res) {
+        const { tourId } = req.params;
+        const { title,brief,detail,location,price,rate,voucher} = req.body;
+        try {
+            await tourService.UpdateTour(tourId, title,brief,detail,location,price,rate,voucher);
+            res.status(200).json({ success: true });
+        } catch (err) {
+            res.status(500).json({ success: false, error: err.message });
+        }
+    }
     static async renderTourByID(req, res) {
         const { tour_id } = req.params;
         try {
