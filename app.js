@@ -40,7 +40,6 @@ const dashboard = require('./src/routes/dashboardRoutes');
 const accountManagement = require('./src/routes/accountManagementRoutes');
 const logoutRoutes = require('./src/routes/logoutRoutes');
 const orderManagementRoutes = require('./src/routes/orderManagementRoutes');
-const reportRoutes = require('./src/routes/reportRoutes');
 
 app.use(cors({
     origin: ['http://localhost:3000', process.env.TOURIST_PATH],
@@ -62,13 +61,12 @@ app.set('views', path.join(__dirname, 'src', 'views'))
 
 app.use(express.static(path.join(__dirname, 'src', 'public')));
 
-app.use('/', requireAdmin, viewsRoutes);
+app.use('/', viewsRoutes);
 app.use('/accountManagement', accountManagement);
 app.use('/logout', logoutRoutes);
 app.use('/orderManagement', orderManagementRoutes);
 app.use('/dashboard', dashboard);
 app.use('/tour-management', tourRoutes);
-app.use('/report', reportRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
