@@ -39,6 +39,7 @@ const accountManagement = require('./src/routes/accountManagementRoutes');
 const handleAccount = require('./src/routes/handleAccountRoutes');
 const logoutRoutes = require('./src/routes/logoutRoutes');
 const orderManagementRoutes = require('./src/routes/orderManagementRoutes');
+const reportRoutes = require('./src/routes/reportRoutes');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -62,6 +63,9 @@ app.use('/logout', logoutRoutes);
 app.use('/orderManagement', orderManagementRoutes);
 app.use('/dashboard', dashboard);
 app.use('/tour-management', tourRoutes);
+app.use('/report', reportRoutes);
+
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
