@@ -13,7 +13,7 @@ class reportModel {
                 JOIN 
                     reservations r ON dr.reservation_id = r.reservation_id
                 GROUP BY 
-                    EXTRACT(YEAR FROM r.reservation_date)
+                    time
                 ORDER BY 
                     ${sortByValue} ${orderValue}
             `;
@@ -31,7 +31,6 @@ class reportModel {
                 SELECT 
                     SUM(dr.total_price) AS total_money, 
                     CONCAT(
-                        LPAD(EXTRACT(DAY FROM r.reservation_date)::TEXT, 2, '0'), '/', 
                         LPAD(EXTRACT(MONTH FROM r.reservation_date)::TEXT, 2, '0'), '/', 
                         EXTRACT(YEAR FROM r.reservation_date)::TEXT
                     ) AS time
@@ -40,7 +39,7 @@ class reportModel {
                 JOIN 
                     reservations r ON dr.reservation_id = r.reservation_id
                 GROUP BY 
-                    EXTRACT(YEAR FROM r.reservation_date), EXTRACT(MONTH FROM r.reservation_date)
+                    time
                 ORDER BY 
                     ${sortByValue} ${orderValue}
             `;
@@ -67,7 +66,7 @@ class reportModel {
                 JOIN 
                     reservations r ON dr.reservation_id = r.reservation_id
                 GROUP BY 
-                    EXTRACT(YEAR FROM r.reservation_date), EXTRACT(MONTH FROM r.reservation_date), EXTRACT(DAY FROM r.reservation_date)
+                    time
                 ORDER BY 
                     ${sortByValue} ${orderValue}
             `;
