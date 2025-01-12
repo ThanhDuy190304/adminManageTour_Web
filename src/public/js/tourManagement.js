@@ -109,6 +109,10 @@ function applyFilters() {
 
             // Hiển thị các nút phân trang
             renderPageButtons(data.totalPages);
+            if(currentPage>data.totalPages){
+                currentPage = 1;
+                applyFilters()
+            }
             totalpage = data.totalPages;
             // Cập nhật URL trên trình duyệt mà không tải lại trang
             updateURL(queryParams);
@@ -152,7 +156,6 @@ function renderHTML(paginatedTours) {
                                 <i class="fa-solid fa-star text-yellow-500"></i>
                                 <i class="fa-solid fa-star text-yellow-500"></i>
                             </div>
-                            <button type="button" class="self-end px-4 py-2 bg-green-900 text-white rounded-full hover:bg-green-950 transition-colors duration-200" value="${tour.tour_id}">Delete</button>
                             <button type="button" id="udateTourButton" class="self-end px-4 py-2 bg-green-900 text-white rounded-full hover:bg-green-950 transition-colors duration-200" value="${tour.tour_id}" onclick="handleUpdateClick(this)">Update</button>
                         </div>
                     </div>
@@ -281,7 +284,7 @@ function showTourModal(action, tourData = null, tourId = null) {
         modalTitle.textContent = 'Update Tour';
         document.getElementById('tourTitle').value = tourData.title || '';
         document.getElementById('tourBrief').value = tourData.brief || '';
-        document.getElementById('tourDetail').value = tourData.detail || '';
+        document.getElementById('tourDetail').value = tourData.details || '';
         document.getElementById('tourLocation').value = tourData.locationName || '';
         document.getElementById('tourPrice').value = tourData.prices || '';
         document.getElementById('tourRate').value = tourData.rate || '';
@@ -354,7 +357,7 @@ function addTourAPI(tourData) {
 
 // Hàm gọi API để cập nhật thông tin tour
 function updateTourAPI(tourId, tourData) {
-    fetch(`/tour-management/api/${tourId}`, {
+    fetch(`/tour-management/UpdateTour/${tourId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'

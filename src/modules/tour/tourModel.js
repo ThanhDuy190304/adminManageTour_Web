@@ -18,12 +18,31 @@ class tourModel {
                                         from locations
                                         where location_name = $5),$6,$7,$8);
                         `;
-        console.log(query)
         const query2 = `Insert into tour_images(img_id, tour_id, img_url)
-                        values (1, $1, 'https://i.imgur.com/oxw2R9P.png')`
+                        values (1, $1, 'https://i.imgur.com/oxw2R9P.png')`;
+        const nextDetailTour = await tourModel.getNextIDDetail();
+        const query3 = `Insert into detail_tours(detail_tour_id, tour_id, status, tour_date, booked_quantity, max_quantity)
+                        values ($1, $2, 'available', '2025-01-28', 0, 50)`;
         try {
             await db.query(query, [tourID,title,brief,detail,location,price,rate,voucher]);
             await db.query(query2, [tourID]);
+            await db.query(query3, [nextDetailTour, tourID]);
+        } catch (err) {
+            console.log("Error in tourModel", err);
+        }
+        return null;
+    }
+    static async UpdateTour(tourId, title,brief,detail,location,price,rate,voucher) {
+        const query = `UPDATE tours
+                        SET title=$2,brief=$3,details=$4,location_id=(select location_id
+                                                                    from locations
+                                                                    where location_name = $5),prices=$6,rate=$7,voucher=$8
+                        WHERE tour_id = $1
+                        `;
+                        
+        console.log(query)
+        try {
+            await db.query(query, [tourId,title,brief,detail,location,price,rate,voucher]);
         } catch (err) {
             console.log("Error in tourModel", err);
         }
@@ -40,6 +59,17 @@ class tourModel {
         }
         return null;
     }
+    static async getNextIDDetail() {
+        const query = `SELECT CONCAT('d', LPAD((CAST(SUBSTRING(MAX(detail_tour_id) FROM 2) AS INTEGER) + 1)::TEXT, 3, '0')) AS next_detail_tour_id
+                        FROM detail_tours;`;
+        try {
+            const result = await db.query(query);
+            return result.rows[0].next_detail_tour_id;
+        } catch (err) {
+            console.log("Error in tourModel", err);
+        }
+        return null;
+    }
 	static async getTours(page, searchQuery, sort, locationQuery, companyQuery) {
 		if (!Array.isArray(locationQuery)) { locationQuery = [locationQuery]; }
         if (!Array.isArray(companyQuery)) { companyQuery = [companyQuery]; }
@@ -48,8 +78,8 @@ class tourModel {
             LEFT JOIN tour_images t_i ON t.tour_id = t_i.tour_id
             LEFT JOIN locations lo ON lo.location_id = t.location_id
             WHERE t_i.img_id = 1
-            AND ('${searchQuery}' = 'default' OR t.title LIKE CONCAT('%', '${searchQuery}', '%'))
-            AND ('${searchQuery}' = 'default' OR t.brief LIKE CONCAT('%', '${searchQuery}', '%'))
+            AND (('${searchQuery}' = 'default' OR t.title LIKE CONCAT('%', '${searchQuery}', '%'))
+            OR ('${searchQuery}' = 'default' OR t.brief LIKE CONCAT('%', '${searchQuery}', '%')))
             AND (
                 '${locationQuery[0]}' LIKE 'default' OR
                 ${locationQuery.map((location, index) => `

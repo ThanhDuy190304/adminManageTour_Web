@@ -20,6 +20,15 @@ class TourService {
             throw new Error(err.message);
         }
     }
+    static async UpdateTour(tourId, title,brief,detail,location,price,rate,voucher) {
+        console.log(title,brief,detail,location,price,rate,voucher)
+        try {
+            await tourModel.UpdateTour(tourId, title,brief,detail,location,price,rate,voucher);
+        } catch (err) {
+            throw new Error(err.message);
+        }
+    }
+
     static async getTourByID(tour_id) {
         try {
             const tour = await tourModel.getTourByID(tour_id);

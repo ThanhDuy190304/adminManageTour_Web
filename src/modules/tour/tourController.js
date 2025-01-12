@@ -46,6 +46,16 @@ class tourController {
             res.status(500).json({ success: false, error: err.message });
         }
     }
+    static async UpdateTour(req, res) {
+        const { tourId } = req.params;
+        const { title,brief,detail,location,price,rate,voucher} = req.body;
+        try {
+            await tourService.UpdateTour(tourId, title,brief,detail,location,price,rate,voucher);
+            res.status(200).json({ success: true });
+        } catch (err) {
+            res.status(500).json({ success: false, error: err.message });
+        }
+    }
     static async renderTourByID(req, res) {
         const { tour_id } = req.params;
         try {
