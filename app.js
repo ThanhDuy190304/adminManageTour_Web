@@ -33,7 +33,7 @@ Handlebars.registerHelper('add', (a, b) => {
 
 const viewsRoutes = require('./src/routes/viewsRoutes');
 const tourRoutes = require('./src/routes/tourRoutes');
-
+const userRoutes = require('./src/routes/userRoutes');
 const dashboard = require('./src/routes/dashboardRoutes');
 const accountManagement = require('./src/routes/accountManagementRoutes');
 const logoutRoutes = require('./src/routes/logoutRoutes');
@@ -60,7 +60,7 @@ app.use('/accountManagement', requireAdmin, accountManagement);
 app.use('/logout', requireAdmin, logoutRoutes);
 app.use('/orderManagement', requireAdmin, orderManagementRoutes);
 app.use('/dashboard', requireAdmin, dashboard);
-
+app.use('/user', requireAdmin, userRoutes);
 app.use('/tour-management', requireAdmin, tourRoutes);
 
 app.listen(PORT, () => {

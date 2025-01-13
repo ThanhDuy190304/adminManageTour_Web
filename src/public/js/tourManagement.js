@@ -1,3 +1,4 @@
+
 // Ấn vào để đến trang chi tiết của tour
 function StoreId(button) {
     const id = button.value;
@@ -301,6 +302,42 @@ function hideTourModal() {
     document.getElementById('tourModal').classList.add('hidden');
 }
 
+const addImageButton = document.getElementById('addImageButton');
+const imagePreview = document.getElementById('imagePreview');
+let selectedImages = [];  // Array lưu các file ảnh
+
+// Xử lý khi người dùng chọn ảnh
+addImageButton.addEventListener('click', function() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.multiple = true;  // Cho phép chọn nhiều ảnh
+    fileInput.click();
+
+    fileInput.addEventListener('change', function(event) {
+        const files = event.target.files;
+        if (files.length > 0) {
+            handleFiles(files);
+        }
+    });
+});
+
+// Hiển thị ảnh đã chọn
+function handleFiles(files) {
+    const fileArray = Array.from(files);
+    fileArray.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imgElement = document.createElement('img');
+            imgElement.src = e.target.result;
+            imgElement.classList.add('w-16', 'h-16', 'mr-2', 'mb-2', 'object-cover');
+            imagePreview.appendChild(imgElement);
+            selectedImages.push(file);
+        };
+        reader.readAsDataURL(file);  // Đọc ảnh dưới dạng base64
+    });
+}
+
 // Xử lý form submit để thêm hoặc cập nhật tour
 document.getElementById('tourForm').addEventListener('submit', function(event) {
     event.preventDefault();
@@ -312,35 +349,57 @@ document.getElementById('tourForm').addEventListener('submit', function(event) {
     const price = document.getElementById('tourPrice').value;
     const rate = document.getElementById('tourRate').value;
     const voucher = document.getElementById('tourVoucher').value;
+    // Kiểm tra các trường trống
+    if (!title || !brief || !detail || !location || !price || !rate || !voucher) {
+        alert('Please fill in all fields.');
+        return;
+    }
 
-    const tourData = {
-        title,
-        brief,
-        detail,
-        location,
-        price,
-        rate,
-        voucher,
-    };
+    // Kiểm tra định dạng giá (ví dụ: chỉ cho phép số)
+    if (isNaN(price) || Number(price) <= 0) {
+        alert('Please enter a valid price.');
+        return;
+    }
+
+    if (isNaN(voucher) || Number(voucher) <= 0) {
+        alert('Please enter a valid voucher.');
+        return;
+    }
+
+    // Kiểm tra định dạng đánh giá (ví dụ: từ 1 đến 5)
+    if (isNaN(rate) || rate < 1 || rate > 5) {
+        alert('Please enter a valid rate between 1 and 5.');
+        return;
+    }
+    let formData = new FormData();
+    selectedImages.forEach(image => {
+        console.log(image); // Kiểm tra mỗi ảnh
+        formData.append('images[]', image);  // Sử dụng 'images[]' để gửi mảng ảnh
+    });
+    // Append các trường dữ liệu text vào FormData
+    formData.append('title', title);
+    formData.append('brief', brief);
+    formData.append('detail', detail);
+    formData.append('location', location);
+    formData.append('price', price);
+    formData.append('rate', rate);
+    formData.append('voucher', voucher);
 
     if (currentTourId) {
         // Nếu có currentTourId, thực hiện cập nhật tour
-        updateTourAPI(currentTourId, tourData);
+        updateTourAPI(currentTourId, formData);
         currentTourId = null;
     } else {
         // Nếu không có currentTourId, thực hiện thêm tour mới
-        addTourAPI(tourData);
+        addTourAPI(formData);
     }
 });
 
 // Hàm gọi API để thêm tour mới
-function addTourAPI(tourData) {
+function addTourAPI(formData) {
     fetch('/tour-management/addTourId', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(tourData)
+        body: formData  // Gửi formData, không cần set Content-Type vì sẽ tự động
     })
     .then(response => response.json())
     .then(data => {

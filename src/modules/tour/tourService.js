@@ -10,12 +10,14 @@ class TourService {
             throw new Error(err.message);
         }
     }
-    static async addTourId(title,brief,detail,location,price,rate,voucher) {
-            console.log(title,brief,detail,location,price,rate,voucher)
+    static async addTourId(title, brief, detail, location, price, rate, voucher, uploadedUrls) {
+            console.log( title, brief, detail, location, price, rate, voucher, uploadedUrls)
         try {
             const touID = await tourModel.getNextID();
-            console.log(touID,title,brief,detail,location,price,rate,voucher)
             await tourModel.addTourId(touID,title,brief,detail,location,price,rate,voucher);
+            uploadedUrls.forEach(async (uploadedUrl, index) => {
+                await tourModel.addImageTour(touID,uploadedUrl, index);
+            });
         } catch (err) {
             throw new Error(err.message);
         }
