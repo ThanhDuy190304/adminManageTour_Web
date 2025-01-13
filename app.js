@@ -63,18 +63,16 @@ app.set('views', path.join(__dirname, 'src', 'views'))
 
 app.use(express.static(path.join(__dirname, 'src', 'public')));
 
-app.use('/', viewsRoutes);
+app.use('/', requireAdmin, viewsRoutes);
 app.use('/accountManagement', accountManagement);
 //app.use('/accountManagement', requireAdmin, accountManagement);
 //app.use('/reportByIncome', requireAdmin, reportRoutes);
+app.use('/logout', logoutRoutes);
+app.use('/orderManagement', orderManagementRoutes);
+app.use('/dashboard', dashboard);
+app.use('/tour-management', tourRoutes);
 app.use('/reportByIncome', reportByIncome);
-//app.use('/reportByTour', requireAdmin, reportRoutes);
-app.use('/reportByTour',reportByTour);
-app.use('/logout', requireAdmin, logoutRoutes);
-app.use('/orderManagement', requireAdmin, orderManagementRoutes);
-app.use('/dashboard', requireAdmin, dashboard);
-app.use('/handleAccount', requireAdmin, handleAccount);
-app.use('/tour-management', requireAdmin, tourRoutes);
+app.use('/reportByTour', reportByTour);
 
 
 app.listen(PORT, () => {
