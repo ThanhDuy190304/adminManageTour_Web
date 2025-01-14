@@ -10,22 +10,35 @@ class TourService {
             throw new Error(err.message);
         }
     }
-    static async addTourId(title, brief, detail, location, price, rate, voucher, uploadedUrls) {
-            console.log( title, brief, detail, location, price, rate, voucher, uploadedUrls)
+    static async addTourId(title, brief, detail, location, price, rate, voucher, uploadedUrls, detailed) {
+        detailed=JSON.parse(detailed); 
         try {
             const touID = await tourModel.getNextID();
             await tourModel.addTourId(touID,title,brief,detail,location,price,rate,voucher);
             uploadedUrls.forEach(async (uploadedUrl, index) => {
                 await tourModel.addImageTour(touID,uploadedUrl, index);
             });
+            detailed.forEach(async (detail_tour) => {
+                console.log(detail_tour); // Kiểm tra thông tin từng đối tượng
+                await tourModel.addDetailedTour(touID, detail_tour.date, detail_tour.status, detail_tour.maxQuantity);
+            });
         } catch (err) {
             throw new Error(err.message);
         }
     }
-    static async UpdateTour(tourId, title,brief,detail,location,price,rate,voucher) {
-        console.log(title,brief,detail,location,price,rate,voucher)
+    static async UpdateTour(tourId, title, brief, detail, location, price, rate, voucher, uploadedUrls, detailed) {
         try {
+            detailed=JSON.parse(detailed); 
             await tourModel.UpdateTour(tourId, title,brief,detail,location,price,rate,voucher);
+            
+            await tourModel.deleteImageTour(tourId)
+            uploadedUrls.forEach(async (uploadedUrl, index) => {
+                await tourModel.addImageTour(tourId,uploadedUrl, index);
+            });
+            detailed.forEach(async (detail_tour) => {
+                console.log(detail_tour); // Kiểm tra thông tin từng đối tượng
+                await tourModel.updateDetailedTour(tourId, detail_tour.detail_tour_id, detail_tour.date, detail_tour.status, detail_tour.maxQuantity);
+            });
         } catch (err) {
             throw new Error(err.message);
         }

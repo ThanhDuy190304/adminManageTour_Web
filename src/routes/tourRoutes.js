@@ -10,7 +10,7 @@ router.get('/api', tourController.getAllToursAPI);
 // router.get('/api/getNumberOfTour', tourController.getNumberOfTour);
 router.get('/getTourById/:tourId', tourController.getTourById);
 router.post('/addTourId', upload.array('images[]'), tourController.addTourId);
-router.put('/UpdateTour/:tourId', tourController.UpdateTour);
+router.put('/UpdateTour/:tourId',upload.array('images[]'), tourController.UpdateTour);
 router.get('/', tourController.listAllTour);
 
 module.exports = router;

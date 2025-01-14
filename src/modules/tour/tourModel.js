@@ -29,7 +29,37 @@ class tourModel {
         }
         return null;
     }
+
+    static async updateDetailedTour(tourId, detail_tour_id, date, status, maxQuantity) {
+        
+        console.log("updateDetailedTour",tourId, detail_tour_id, date, status, maxQuantity)
+        const query = `Update detail_tours
+                        Set tour_date = $3, status = $4, max_quantity = $5
+                        Where detail_tour_id = $2 AND tour_id = $1
+                        `;
+        try {
+            await db.query(query, [tourId, detail_tour_id, date, status, maxQuantity]);
+        } catch (err) {
+            console.log("Error in tourModel", err);
+        }
+        return null;
+    }
+
+    static async deleteImageTour(tourID) {
+        console.log("deleteImageTour",tourID)
+        const query = `delete from tour_images
+                        where tour_id = $1;
+                        `;
+        try {
+            await db.query(query, [tourID]);
+        } catch (err) {
+            console.log("Error in tourModel", err);
+        }
+        return null;
+    }
+
     static async addImageTour(touID,uploadedUrl, index) {
+        console.log("addImageTour",touID,uploadedUrl, index)
         const query = `Insert into tour_images(img_id, tour_id, img_url)
                         values ($3,$1,$2);
                         `;
@@ -40,15 +70,34 @@ class tourModel {
         }
         return null;
     }
+
+    static async addDetailedTour(touID,date,status,maxQuantity, index) {
+        const query = `Insert into detail_tours(detail_tour_id, tour_id, status, tour_date, booked_quantity, max_quantity)
+                        values ((SELECT 
+                            CASE 
+                                WHEN MAX(CAST(SUBSTRING(detail_tour_id, 2) AS INTEGER)) IS NULL THEN 'd001'
+                                ELSE CONCAT('d', LPAD(CAST(MAX(CAST(SUBSTRING(detail_tour_id, 2) AS INTEGER)) + 1 AS CHAR), 3, '0'))
+                            END AS next_detail_tour_id
+                        FROM detail_tours
+                        WHERE tour_id = '$1'),$1,$3,$2,0,$4);
+                        `;
+        try {
+            await db.query(query, [touID,date,status,maxQuantity, index]);
+        } catch (err) {
+            console.log("Error in tourModel", err);
+        }
+        return null;
+    }
+
     static async UpdateTour(tourId, title,brief,detail,location,price,rate,voucher) {
+        console.log(tourId, title,brief,detail,location,price,rate,voucher)
         const query = `UPDATE tours
                         SET title=$2,brief=$3,details=$4,location_id=(select location_id
                                                                     from locations
                                                                     where location_name = $5),prices=$6,rate=$7,voucher=$8
                         WHERE tour_id = $1
                         `;
-                        
-        console.log(query)
+                    
         try {
             await db.query(query, [tourId,title,brief,detail,location,price,rate,voucher]);
         } catch (err) {
@@ -200,6 +249,8 @@ class tourModel {
             ARRAY_AGG(
                 JSON_BUILD_OBJECT(  
                     'schedule_id', dt.detail_tour_id,
+                    'status', dt.status,
+                    'max_quantity', dt.max_quantity,
                     'status', dt.status,
                     'available_quantity', 
                         CASE

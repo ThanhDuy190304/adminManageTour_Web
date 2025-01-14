@@ -107,7 +107,6 @@
 </div>
 
 <!-- Modal Add/Update Tour -->
-<!-- Modal Add/Update Tour -->
 <div id="tourModal" class="fixed inset-0 z-50 hidden bg-gray-800 bg-opacity-50 justify-center items-center flex">
     <div class="bg-white p-6 rounded-lg w-full sm:w-1/2 lg:w-2/3 flex">
         <!-- Phần bên trái (Upload ảnh) -->
@@ -117,8 +116,11 @@
                 <!-- Hiển thị ảnh đã chọn ở đây -->
             </div>
             <button id="addImageButton" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm w-full">Add Image</button>
+            <div id="details-container" class="mt-5 h-64 overflow-y-auto border p-2 rounded-lg">
+            <!-- Nơi danh sách các chi tiết tour sẽ được thêm vào -->
+            </div>
+            <button id="add-detail-button" class="btn btn-primary mt-3">Thêm Chi Tiết</button>
         </div>
-
         <!-- Phần bên phải (Thông tin tour) -->
         <div class="w-2/3">
             <h2 id="modalTitle" class="text-2xl font-semibold mb-4">Add New Tour</h2>
@@ -171,6 +173,27 @@
             </form>
         </div>
     </div>
+    <div id="add-detail-dialog" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
+        <div class="bg-white rounded-lg p-5 w-1/3">
+            <h2 class="text-xl font-bold mb-4">Thêm Chi Tiết Tour</h2>
+            <form id="detail-form">
+                <label for="detail-date" class="block text-sm font-medium text-gray-700">Ngày:</label>
+                <input type="date" id="detail-date" name="date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                
+                <label for="detail-status" class="block text-sm font-medium text-gray-700 mt-4">Trạng thái:</label>
+                <input type="text" id="detail-status" name="status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                
+                <label for="detail-quantity" class="block text-sm font-medium text-gray-700 mt-4">Số lượng tối đa:</label>
+                <input type="number" id="detail-quantity" name="max-quantity" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                
+                <div class="mt-6 flex justify-end">
+                    <button type="button" id="cancel-detail-button" class="btn btn-secondary mr-2">Hủy</button>
+                    <button type="button" id="save-detail-button" class="btn btn-primary">Xong</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+
 </section>
 <script src="/js/tourManagement.js"></script>

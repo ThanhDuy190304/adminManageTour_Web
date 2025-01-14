@@ -40,9 +40,8 @@ class tourController {
     }
     static async addTourId(req, res) {
         try {
-            const { title, brief, detail, location, price, rate, voucher } = req.body;
+            const { title, brief, detail, location, price, rate, voucher,details } = req.body;
             const files = req.files;  // Multer sẽ xử lý và lấy files
-            console.log(files)
             if (!files || files.length === 0) {
                 return res.status(400).json({ error: 'No files uploaded' });
             }
@@ -59,7 +58,7 @@ class tourController {
     
                 uploadedUrls.push(fileUrl);  // Thêm URL của file vào mảng
             }
-            await tourService.addTourId(title, brief, detail, location, price, rate, voucher, uploadedUrls);
+            await tourService.addTourId(title, brief, detail, location, price, rate, voucher, uploadedUrls, details);
     
             return res.status(200).json({ success: true, message: 'Tour added successfully'});
     
@@ -71,10 +70,27 @@ class tourController {
     }
     static async UpdateTour(req, res) {
         const { tourId } = req.params;
-        const { title,brief,detail,location,price,rate,voucher} = req.body;
+        const { title, brief, detail, location, price, rate, voucher,details,newImages } = req.body;
         try {
-            await tourService.UpdateTour(tourId, title,brief,detail,location,price,rate,voucher);
-            res.status(200).json({ success: true });
+            const files = req.files;  // Multer sẽ xử lý và lấy files
+    
+            const uploadedUrls = [];
+    
+            // Duyệt qua từng file và upload
+            for (const file of files) {
+                const fileBuffer = file.buffer;  // Dữ liệu file dưới dạng buffer
+                const fileType = file.mimetype;  // MIME type của file
+    
+                // Giả sử bạn có một hàm upload lên Supabase hoặc bất kỳ dịch vụ nào
+                const fileUrl = await uploadService.uploadProfilePicture(fileBuffer, fileType);
+    
+                uploadedUrls.push(fileUrl);  // Thêm URL của file vào mảng
+            }
+            // Gom mảng uploadedUrls và newImages lại thành một mảng duy nhất
+            const allImages = uploadedUrls.concat(newImages || []);  // Nếu newImages không có thì sẽ là mảng rỗng
+            await tourService.UpdateTour(tourId, title, brief, detail, location, price, rate, voucher, allImages, details);
+            
+            return res.status(200).json({ success: true, message: 'Tour added successfully'});
         } catch (err) {
             res.status(500).json({ success: false, error: err.message });
         }

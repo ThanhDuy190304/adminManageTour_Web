@@ -1,4 +1,8 @@
-
+const addImageButton = document.getElementById('addImageButton');
+const imagePreview = document.getElementById('imagePreview');
+let selectedImages = [];  // Array lưu các file ảnh
+let details=[];
+let newImages = [];  // Array lưu các file ảnh
 // Ấn vào để đến trang chi tiết của tour
 function StoreId(button) {
     const id = button.value;
@@ -274,10 +278,13 @@ document.getElementById('closeModalButton').addEventListener('click', function()
     hideTourModal();
 });
 
-// Hiển thị modal với form trống để thêm tour mới hoặc với thông tin tour cũ để cập nhật
 function showTourModal(action, tourData = null, tourId = null) {
+    selectedImages = [];
+    details=[];
+    newImages = [];
     const modalTitle = document.getElementById('modalTitle');
     const form = document.getElementById('tourForm');
+    
     if (action === 'add') {
         modalTitle.textContent = 'Add New Tour';
         form.reset();
@@ -292,19 +299,120 @@ function showTourModal(action, tourData = null, tourId = null) {
         document.getElementById('tourVoucher').value = tourData.voucher || '';
         // document.getElementById('tourManufactory').value = tourData.manufactory || '';
         currentTourId = tourId;
+
+        // Hiển thị hình ảnh cũ
+        const imagePreview = document.getElementById('imagePreview');
+        imagePreview.innerHTML = '';  // Xóa các hình ảnh cũ
+        if (tourData.imgArray && tourData.imgArray.length > 0) {
+            tourData.imgArray.forEach(imageUrl => {
+                const imgWrapper = document.createElement('div');
+                imgWrapper.className = 'relative inline-block mr-2 mb-2';
+
+                const imgElement = document.createElement('img');
+                imgElement.src = imageUrl;  // URL của ảnh
+                imgElement.classList.add('w-16', 'h-16', 'object-cover');
+                imgWrapper.appendChild(imgElement);
+
+                const removeBtn = document.createElement('span');
+                removeBtn.className = 'absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer';
+                removeBtn.textContent = 'x';
+                removeBtn.onclick = () => {
+                    newImages = newImages.filter(imgUrl => imgUrl !== imageUrl);
+                    imgWrapper.remove();
+                };
+                imgWrapper.appendChild(removeBtn);
+
+                imagePreview.appendChild(imgWrapper);
+                newImages.push(imageUrl);
+            });
+        }
+
+        const detailsContainer = document.getElementById('details-container');
+        detailsContainer.innerHTML = '';  // Xóa các detail cũ
+        if (tourData.schedulesTour && Array.isArray(tourData.schedulesTour)) {
+            tourData.schedulesTour.forEach((detail, index) => {
+                const detail_tour = { detail_tour_id: detail.schedule_id, date: detail.tour_date, status: detail.status, maxQuantity: detail.max_quantity };
+                details.push(detail_tour);
+
+                const detailItem = document.createElement('div');
+                detailItem.className = 'detail-item p-4 border rounded-md mt-2 cursor-pointer';
+                detailItem.innerHTML = `<strong>Ngày:</strong> ${detail.tour_date}, <strong>Trạng thái:</strong> ${detail.status}, <strong>Số lượng tối đa:</strong> ${detail.max_quantity}`;
+                
+                detailItem.onclick = null;  // Xóa sự kiện cũ trước khi thêm sự kiện mới
+                detailItem.onclick = () => {
+                    showDetailDialog(index);
+                };
+
+                detailsContainer.appendChild(detailItem);
+            });
+        }
     }
 
     document.getElementById('tourModal').classList.remove('hidden');
 }
 
+function showDetailDialog(index) {
+    const detail = details[index];
+
+    document.getElementById('detail-date').value = detail.date;
+    document.getElementById('detail-status').value = detail.status;
+    document.getElementById('detail-quantity').value = detail.maxQuantity;
+
+    const dialog = document.getElementById('add-detail-dialog');
+    dialog.classList.remove('hidden');
+
+    document.getElementById('save-detail-button').onclick = () => saveDetail(index);
+    document.getElementById('cancel-detail-button').onclick = () => dialog.classList.add('hidden');
+}
+
+function saveDetail(index) {
+    const date = document.getElementById('detail-date').value;
+    const status = document.getElementById('detail-status').value;
+    const maxQuantity = document.getElementById('detail-quantity').value;
+
+    // Cập nhật thông tin trong mảng details
+    details[index] = {
+        ...details[index],
+        date,
+        status,
+        maxQuantity: parseInt(maxQuantity, 10)
+    };
+
+    // Xóa div cũ
+    const detailsContainer = document.getElementById('details-container');
+    const oldDetailItem = detailsContainer.children[index];
+    detailsContainer.removeChild(oldDetailItem);
+
+    // Tạo div mới với thông tin cập nhật
+    const detailItem = document.createElement('div');
+    detailItem.className = 'detail-item p-4 border rounded-md mt-2 cursor-pointer';
+    detailItem.innerHTML = `<strong>Ngày:</strong> ${date}, <strong>Trạng thái:</strong> ${status}, <strong>Số lượng tối đa:</strong> ${maxQuantity}`;
+
+    // Thêm sự kiện click để chỉnh sửa lại thông tin
+    detailItem.onclick = () => {
+        showDetailDialog(index);
+    };
+
+    // Thêm div mới vào đúng vị trí
+    if (index < detailsContainer.children.length) {
+        detailsContainer.insertBefore(detailItem, detailsContainer.children[index]);
+    } else {
+        detailsContainer.appendChild(detailItem);
+    }
+
+    // Ẩn dialog
+    document.getElementById('add-detail-dialog').classList.add('hidden');
+}
+
 // Ẩn modal
 function hideTourModal() {
     document.getElementById('tourModal').classList.add('hidden');
-}
+    const imgsContainer = document.getElementById('imagePreview');
+            imgsContainer.innerHTML = '';
 
-const addImageButton = document.getElementById('addImageButton');
-const imagePreview = document.getElementById('imagePreview');
-let selectedImages = [];  // Array lưu các file ảnh
+            const detailsContainer = document.getElementById('details-container');
+            detailsContainer.innerHTML = '';
+}
 
 // Xử lý khi người dùng chọn ảnh
 addImageButton.addEventListener('click', function() {
@@ -384,6 +492,10 @@ document.getElementById('tourForm').addEventListener('submit', function(event) {
     formData.append('price', price);
     formData.append('rate', rate);
     formData.append('voucher', voucher);
+    formData.append('details', JSON.stringify(details));
+    if (currentTourId) {
+        formData.append('newImages', newImages);
+    }
 
     if (currentTourId) {
         // Nếu có currentTourId, thực hiện cập nhật tour
@@ -414,14 +526,12 @@ function addTourAPI(formData) {
     .catch(error => console.error('Error:', error));
 }
 
+
 // Hàm gọi API để cập nhật thông tin tour
-function updateTourAPI(tourId, tourData) {
+function updateTourAPI(tourId, formData) {
     fetch(`/tour-management/UpdateTour/${tourId}`, {
         method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(tourData)
+        body: formData
     })
     .then(response => response.json())
     .then(data => {
@@ -455,3 +565,29 @@ function deleteTour(button) {
         .catch(error => console.error('Error:', error));
     }
 }
+
+document.getElementById('add-detail-button').addEventListener('click', function() {
+    document.getElementById('save-detail-button').onclick = function() {
+        const date = document.getElementById('detail-date').value;
+        const status = document.getElementById('detail-status').value;
+        const maxQuantity = document.getElementById('detail-quantity').value;
+        console.log(details)
+    
+        if (date && status && maxQuantity) {
+            const detail = { date, status, maxQuantity };
+            details.push(detail);
+            
+            const detailItem = document.createElement('div');
+            detailItem.className = 'detail-item p-4 border rounded-md mt-2';
+            detailItem.innerHTML = `<strong>Ngày:</strong> ${date}, <strong>Trạng thái:</strong> ${status}, <strong>Số lượng tối đa:</strong> ${maxQuantity}`;
+            
+            document.getElementById('details-container').appendChild(detailItem);
+            document.getElementById('add-detail-dialog').classList.add('hidden');
+        }
+    };
+    document.getElementById('add-detail-dialog').classList.remove('hidden');
+});
+
+document.getElementById('cancel-detail-button').addEventListener('click', function() {
+    document.getElementById('add-detail-dialog').classList.add('hidden');
+});
