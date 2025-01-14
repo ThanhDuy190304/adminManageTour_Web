@@ -66,7 +66,6 @@ app.use(express.static(path.join(__dirname, 'src', 'public')));
 
 app.use('/', requireAdmin, viewsRoutes);
 app.use('/accountManagement', accountManagement);
-
 app.use('/logout', logoutRoutes);
 app.use('/orderManagement', orderManagementRoutes);
 app.use('/dashboard', dashboard);

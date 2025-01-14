@@ -55,6 +55,7 @@ async function fetchTourByYear(){
 async function fetchTourByMonth(){
     const tour_name = titleList.value;
     try{
+        console.log(tour_name);
         const response = await fetch(`/reportByTour/tourStatisticByMonth/${tour_name}`);
         const data = await response.json();
         venue = data.venue;

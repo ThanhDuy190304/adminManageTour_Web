@@ -40,6 +40,7 @@ class reportByTourController {
     static async tourStatisticByMonth(req, res) {
         try {
             const tour_name = req.params.tour_name;
+            console.log(tour_name);
             const result = await reportByTourService.tourStatisticByMonth(tour_name);
             res.status(200).json({
                 success: true,
@@ -59,7 +60,6 @@ class reportByTourController {
         try {
             const tour_name = req.params.tour_name;
             const result = await reportByTourService.tourStatisticByDay(tour_name);
-            console.log(result);
             res.status(200).json({
                 success: true,
                 venue: result,

@@ -15,9 +15,19 @@ class userService {
 
     }
 
-    static async getAllUsers() {
+    static async getCountFilterUser(name_email) {
         try {
-            let users = await userModel.getAllUsers();
+            let countUser = await userModel.getCountFilterUser(name_email);
+            return countUser;
+        } catch (error) {
+            console.log("Error getCountFilterUser in userService: ", error.message);
+            throw new Error("Error getCountFilterUser in userService");
+        }
+    }
+
+    static async getAllUsers(sortBy, order, page) {
+        try {
+            let users = await userModel.getAllUsers(sortBy, order, page);
             return users;
         }
         catch (error) {
@@ -26,9 +36,9 @@ class userService {
         }
     }
 
-    static async filterUsers(name_email) {
+    static async filterUsers(name_email, sortBy, order, page) {
         try {
-            let users = await userModel.filterUsers(name_email);
+            let users = await userModel.filterUsers(name_email, sortBy, order, page);
             return users;
         }
         catch (error) {
