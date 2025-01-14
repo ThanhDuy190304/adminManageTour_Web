@@ -7,23 +7,17 @@
 
         <!-- Sidebar Menu -->
         <div class="mt-4">
-            <!-- Admin Info -->
-            <div class="flex items-center p-5 mb-4 text-xl bg-gray-800 text-white rounded-lg">
-                <div class="text-3xl mr-5">
-                    <i class="bx bx-bell"></i>
-                </div>
-                <div class="flex flex-col">
-                    <h4 class="text-lg font-semibold" id="user-name">
-                        {{#if user}}
+            <!-- Navigation Links -->
+            <div class="scrollable-container">
+                <a href="/user"
+                    class="block p-5 mb-4 text-lg hover:bg-blue-700 rounded-lg focus:bg-blue-700 flex items-center">
+                    <i class="fa-solid fa-user mr-3 text-2xl"></i>
+                    <span>{{#if user}}
                         {{user.userName}}
                         {{else}}
                         Admin
-                        {{/if}}
-                    </h4>
-                </div>
-            </div>
-            <!-- Navigation Links -->
-            <div class="scrollable-container">
+                        {{/if}}</span>
+                </a>
                 <a href="/"
                     class="block p-5 mb-4 text-lg hover:bg-blue-700 rounded-lg focus:bg-blue-700 flex items-center">
                     <i class="fa fa-home mr-3 text-2xl"></i>

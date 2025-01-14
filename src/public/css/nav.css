@@ -1,5 +1,5 @@
 .scrollable-container {
-    max-height: 400px;
+    max-height: 500px;
     overflow-y: auto;
     scrollbar-width: thin;
     /* Cho thanh cuộn mỏng */

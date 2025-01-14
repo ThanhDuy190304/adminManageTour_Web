@@ -108,60 +108,92 @@
 
 <!-- Modal Add/Update Tour -->
 <div id="tourModal" class="fixed inset-0 z-50 hidden bg-gray-800 bg-opacity-50 justify-center items-center flex">
-    <div class="bg-white p-6 rounded-lg w-full sm:w-1/2 lg:w-1/3">
-        <h2 id="modalTitle" class="text-2xl font-semibold mb-4">Add New Tour</h2>
+    <div class="bg-white p-6 rounded-lg w-full sm:w-1/2 lg:w-2/3 flex">
+        <!-- Phần bên trái (Upload ảnh) -->
+        <div class="w-1/3 pr-4">
+            <h3 class="text-xl font-semibold mb-4">Images</h3>
+            <div id="imagePreview" class="h-64 overflow-y-auto mb-3 border p-2 rounded-lg">
+                <!-- Hiển thị ảnh đã chọn ở đây -->
+            </div>
+            <button id="addImageButton" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm w-full">Add Image</button>
+            <div id="details-container" class="mt-5 h-64 overflow-y-auto border p-2 rounded-lg">
+            <!-- Nơi danh sách các chi tiết tour sẽ được thêm vào -->
+            </div>
+            <button id="add-detail-button" class="btn btn-primary mt-3">Thêm Chi Tiết</button>
+        </div>
+        <!-- Phần bên phải (Thông tin tour) -->
+        <div class="w-2/3">
+            <h2 id="modalTitle" class="text-2xl font-semibold mb-4">Add New Tour</h2>
 
-        <!-- Form nhập thông tin tour -->
-        <form id="tourForm">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-                <div class="mb-3">
-                    <label for="tourTitle" class="block text-gray-700 text-sm">Tour Title</label>
-                    <input type="text" id="tourTitle" name="title" class="w-full p-2 border rounded-lg text-sm" required>
+            <!-- Form nhập thông tin tour -->
+            <form id="tourForm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                    <div class="mb-3">
+                        <label for="tourTitle" class="block text-gray-700 text-sm">Tour Title</label>
+                        <input type="text" id="tourTitle" name="title" class="w-full p-2 border rounded-lg text-sm" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tourPrice" class="block text-gray-700 text-sm">Price</label>
+                        <input type="number" id="tourPrice" name="price" class="w-full p-2 border rounded-lg text-sm" required>
+                    </div>
+                    <div class="mb-3 md:col-span-2">
+                        <label for="tourBrief" class="block text-gray-700 text-sm">Brief</label>
+                        <input type="text" id="tourBrief" name="brief" class="w-full p-2 border rounded-lg text-sm" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tourLocation" class="block text-gray-700 text-sm">Location</label>
+                        <select id="tourLocation" name="location" class="w-full p-2 border rounded-lg text-sm" required>
+                            <option value="Ha Long Bay">Ha Long Bay</option>
+                            <option value="Hue">Hue</option>
+                            <option value="Ho Chi Minh City">Ho Chi Minh City</option>
+                            <option value="Ha Noi">Ha Noi</option>
+                            <option value="Da Nang">Da Nang</option>
+                            <option value="Da Lat">Da Lat</option>
+                            <option value="Vung Tau">Vung Tau</option>
+                            <option value="Ninh Binh">Ninh Binh</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tourRate" class="block text-gray-700 text-sm">Rate</label>
+                        <input type="number" id="tourRate" name="rate" class="w-full p-2 border rounded-lg text-sm" required>
+                    </div>
+                    <div class="mb-3 md:col-span-2">
+                        <label for="tourDetail" class="block text-gray-700 text-sm">Detail</label>
+                        <textarea id="tourDetail" name="detail" class="w-full p-2 border rounded-lg text-sm" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tourVoucher" class="block text-gray-700 text-sm">Voucher</label>
+                        <input type="text" id="tourVoucher" name="voucher" class="w-full p-2 border rounded-lg text-sm">
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="tourPrice" class="block text-gray-700 text-sm">Price</label>
-                    <input type="number" id="tourPrice" name="price" class="w-full p-2 border rounded-lg text-sm" required>
+                <div class="flex justify-between">
+                    <button type="button" id="closeModalButton" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 text-sm">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">Save</button>
                 </div>
-                <div class="mb-3 md:col-span-2">
-                    <label for="tourBrief" class="block text-gray-700 text-sm">Brief</label>
-                    <input type="text" id="tourBrief" name="brief" class="w-full p-2 border rounded-lg text-sm" required>
+            </form>
+        </div>
+    </div>
+    <div id="add-detail-dialog" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
+        <div class="bg-white rounded-lg p-5 w-1/3">
+            <h2 class="text-xl font-bold mb-4">Thêm Chi Tiết Tour</h2>
+            <form id="detail-form">
+                <label for="detail-date" class="block text-sm font-medium text-gray-700">Ngày:</label>
+                <input type="date" id="detail-date" name="date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                
+                <label for="detail-status" class="block text-sm font-medium text-gray-700 mt-4">Trạng thái:</label>
+                <input type="text" id="detail-status" name="status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                
+                <label for="detail-quantity" class="block text-sm font-medium text-gray-700 mt-4">Số lượng tối đa:</label>
+                <input type="number" id="detail-quantity" name="max-quantity" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                
+                <div class="mt-6 flex justify-end">
+                    <button type="button" id="cancel-detail-button" class="btn btn-secondary mr-2">Hủy</button>
+                    <button type="button" id="save-detail-button" class="btn btn-primary">Xong</button>
                 </div>
-                <div class="mb-3">
-                    <label for="tourLocation" class="block text-gray-700 text-sm">Location</label>
-                    <select id="tourLocation" name="location" class="w-full p-2 border rounded-lg text-sm" required>
-                        <option value="Ha Long Bay">Ha Long Bay</option>
-                        <option value="Hue">Hue</option>
-                        <option value="Ho Chi Minh City">Ho Chi Minh City</option>
-                        <option value="Ha Noi">Ha Noi</option>
-                        <option value="Da Nang">Da Nang</option>
-                        <option value="Da Lat">Da Lat</option>
-                        <option value="Vung Tau">Vung Tau</option>
-                        <option value="Ninh Binh">Ninh Binh</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="tourRate" class="block text-gray-700 text-sm">Rate</label>
-                    <input type="number" id="tourRate" name="rate" class="w-full p-2 border rounded-lg text-sm" required>
-                </div>
-                <div class="mb-3 md:col-span-2">
-                    <label for="tourDetail" class="block text-gray-700 text-sm">Detail</label>
-                    <textarea id="tourDetail" name="detail" class="w-full p-2 border rounded-lg text-sm" rows="3" required></textarea>
-                </div>
-                <div class="mb-3">
-                    <label for="tourVoucher" class="block text-gray-700 text-sm">Voucher</label>
-                    <input type="text" id="tourVoucher" name="voucher" class="w-full p-2 border rounded-lg text-sm">
-                </div>
-                {{!-- <div class="mb-3">
-                    <label for="tourManufactory" class="block text-gray-700 text-sm">Manufactory</label>
-                    <input type="text" id="tourManufactory" name="manufactory" class="w-full p-2 border rounded-lg text-sm">
-                </div> --}}
-            </div>
-            <div class="flex justify-between">
-                <button type="button" id="closeModalButton" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 text-sm">Cancel</button>
-                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">Save</button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
+
 </section>
 <script src="/js/tourManagement.js"></script>

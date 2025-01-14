@@ -35,7 +35,7 @@ Handlebars.registerHelper('add', (a, b) => {
 
 const viewsRoutes = require('./src/routes/viewsRoutes');
 const tourRoutes = require('./src/routes/tourRoutes');
-
+const userRoutes = require('./src/routes/userRoutes');
 const dashboard = require('./src/routes/dashboardRoutes');
 const accountManagement = require('./src/routes/accountManagementRoutes');
 const logoutRoutes = require('./src/routes/logoutRoutes');
@@ -72,6 +72,7 @@ app.use('/dashboard', dashboard);
 app.use('/tour-management', tourRoutes);
 app.use('/reportByIncome', reportByIncome);
 app.use('/reportByTour', reportByTour);
+app.use('/user', userRoutes);
 app.use('/locationManagement', locationManagementRoutes);
 
 app.listen(PORT, () => {
