@@ -268,6 +268,7 @@ function handleUpdateClick(button) {
         .then(response => response.json())
         .then(tourData => {
             // Hiển thị modal với dữ liệu tour lấy từ cơ sở dữ liệu
+            console.log("fetch", tourData)
             showTourModal('update', tourData, tourId);
         })
         .catch(error => console.error('Error fetching tour data:', error));
@@ -303,6 +304,8 @@ function showTourModal(action, tourData = null, tourId = null) {
         // Hiển thị hình ảnh cũ
         const imagePreview = document.getElementById('imagePreview');
         imagePreview.innerHTML = '';  // Xóa các hình ảnh cũ
+        
+        console.log("Sau khi dua vao show model", tourData)
         if (tourData.imgArray && tourData.imgArray.length > 0) {
             tourData.imgArray.forEach(imageUrl => {
                 const imgWrapper = document.createElement('div');
@@ -318,12 +321,15 @@ function showTourModal(action, tourData = null, tourId = null) {
                 removeBtn.textContent = 'x';
                 removeBtn.onclick = () => {
                     newImages = newImages.filter(imgUrl => imgUrl !== imageUrl);
+                    console.log(newImages)
                     imgWrapper.remove();
                 };
                 imgWrapper.appendChild(removeBtn);
 
                 imagePreview.appendChild(imgWrapper);
                 newImages.push(imageUrl);
+                
+                console.log("Mang cac anh cu",newImages)
             });
         }
 
@@ -369,7 +375,30 @@ function saveDetail(index) {
     const date = document.getElementById('detail-date').value;
     const status = document.getElementById('detail-status').value;
     const maxQuantity = document.getElementById('detail-quantity').value;
+    // Kiểm tra các trường trống
+    if (!date || !status || !maxQuantity) {
+        alert('Please fill in all fields.');
+        return;
+    }
 
+    // Kiểm tra định dạng giá (ví dụ: chỉ cho phép số)
+    if (isNaN(maxQuantity) || Number(maxQuantity) <= 0) {
+        alert('Please enter a valid max quantity.');
+        return;
+    }
+    const currentDate = new Date();
+    const detailTourDateObj = new Date(date);
+    // Kiểm tra ngày nhập vào có nhỏ hơn ngày hiện tại
+    if (detailTourDateObj < currentDate) {
+        alert('Schedual must be in the future.');
+        return;
+    }
+
+    if (status !== "available" && status!== "not_available") {
+        alert('Status are available or not_available.');
+        return;
+    }
+    console.log(date,status,maxQuantity)
     // Cập nhật thông tin trong mảng details
     details[index] = {
         ...details[index],
@@ -484,6 +513,7 @@ document.getElementById('tourForm').addEventListener('submit', function(event) {
         console.log(image); // Kiểm tra mỗi ảnh
         formData.append('images[]', image);  // Sử dụng 'images[]' để gửi mảng ảnh
     });
+    console.log("Truoc khi update",newImages)
     // Append các trường dữ liệu text vào FormData
     formData.append('title', title);
     formData.append('brief', brief);
@@ -494,13 +524,16 @@ document.getElementById('tourForm').addEventListener('submit', function(event) {
     formData.append('voucher', voucher);
     formData.append('details', JSON.stringify(details));
     if (currentTourId) {
-        formData.append('newImages', newImages);
+        if (newImages.length > 0) {
+            formData.append('newImages', JSON.stringify(newImages));  // Chỉ append nếu mảng không rỗng
+        } else {
+            formData.append('newImages', "[]");  // Nếu là mảng rỗng, truyền một chuỗi "[]"
+        }
     }
 
     if (currentTourId) {
         // Nếu có currentTourId, thực hiện cập nhật tour
         updateTourAPI(currentTourId, formData);
-        currentTourId = null;
     } else {
         // Nếu không có currentTourId, thực hiện thêm tour mới
         addTourAPI(formData);

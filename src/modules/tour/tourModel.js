@@ -18,12 +18,8 @@ class tourModel {
                                         from locations
                                         where location_name = $5),$6,$7,$8);
                         `;
-        const nextDetailTour = await tourModel.getNextIDDetail();
-        const query3 = `Insert into detail_tours(detail_tour_id, tour_id, status, tour_date, booked_quantity, max_quantity)
-                        values ($1, $2, 'available', '2025-01-28', 0, 50)`;
         try {
             await db.query(query, [tourID,title,brief,detail,location,price,rate,voucher]);
-            await db.query(query3, [nextDetailTour, tourID]);
         } catch (err) {
             console.log("Error in tourModel", err);
         }
@@ -31,8 +27,6 @@ class tourModel {
     }
 
     static async updateDetailedTour(tourId, detail_tour_id, date, status, maxQuantity) {
-        
-        console.log("updateDetailedTour",tourId, detail_tour_id, date, status, maxQuantity)
         const query = `Update detail_tours
                         Set tour_date = $3, status = $4, max_quantity = $5
                         Where detail_tour_id = $2 AND tour_id = $1
@@ -46,7 +40,6 @@ class tourModel {
     }
 
     static async deleteImageTour(tourID) {
-        console.log("deleteImageTour",tourID)
         const query = `delete from tour_images
                         where tour_id = $1;
                         `;
@@ -59,7 +52,6 @@ class tourModel {
     }
 
     static async addImageTour(touID,uploadedUrl, index) {
-        console.log("addImageTour",touID,uploadedUrl, index)
         const query = `Insert into tour_images(img_id, tour_id, img_url)
                         values ($3,$1,$2);
                         `;
@@ -71,18 +63,12 @@ class tourModel {
         return null;
     }
 
-    static async addDetailedTour(touID,date,status,maxQuantity, index) {
-        const query = `Insert into detail_tours(detail_tour_id, tour_id, status, tour_date, booked_quantity, max_quantity)
-                        values ((SELECT 
-                            CASE 
-                                WHEN MAX(CAST(SUBSTRING(detail_tour_id, 2) AS INTEGER)) IS NULL THEN 'd001'
-                                ELSE CONCAT('d', LPAD(CAST(MAX(CAST(SUBSTRING(detail_tour_id, 2) AS INTEGER)) + 1 AS CHAR), 3, '0'))
-                            END AS next_detail_tour_id
-                        FROM detail_tours
-                        WHERE tour_id = '$1'),$1,$3,$2,0,$4);
+    static async addDetailedTour(touID, date, status, maxQuantity, index) {
+        const query = `INSERT INTO detail_tours(tour_id, status, tour_date, booked_quantity, max_quantity)
+        VALUES ($1, $2, $3, 0, $4);
                         `;
         try {
-            await db.query(query, [touID,date,status,maxQuantity, index]);
+            await db.query(query, [touID, status, date, maxQuantity]);
         } catch (err) {
             console.log("Error in tourModel", err);
         }
@@ -90,7 +76,6 @@ class tourModel {
     }
 
     static async UpdateTour(tourId, title,brief,detail,location,price,rate,voucher) {
-        console.log(tourId, title,brief,detail,location,price,rate,voucher)
         const query = `UPDATE tours
                         SET title=$2,brief=$3,details=$4,location_id=(select location_id
                                                                     from locations
@@ -176,7 +161,6 @@ class tourModel {
             ${filterSort}
             LIMIT 6 OFFSET ${(page - 1) * 6}
         `;
-        console.log(dataQuery)
 		try {
 			const paginatedTours = await db.query(dataQuery);
 			const totalPages = await db.query(countQuery);

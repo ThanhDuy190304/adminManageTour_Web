@@ -71,7 +71,20 @@ class tourController {
     static async UpdateTour(req, res) {
         const { tourId } = req.params;
         const { title, brief, detail, location, price, rate, voucher,details,newImages } = req.body;
+        console.log(tourId,title, brief, detail, location, price, rate, voucher,details,newImages)
         try {
+            let newImage;
+            if (typeof newImages === 'string') {
+                console.log("newImages before parsing:", newImages);
+                try {
+                    newImage = JSON.parse(newImages);
+                    console.log("Parsed newImages:", newImage);
+                } catch (e) {
+                    console.error("Error parsing JSON:", e);
+                }
+            } else {
+                console.log("newImages is not a valid string:", newImages);
+            }
             const files = req.files;  // Multer sẽ xử lý và lấy files
     
             const uploadedUrls = [];
@@ -86,8 +99,12 @@ class tourController {
     
                 uploadedUrls.push(fileUrl);  // Thêm URL của file vào mảng
             }
+            
+            console.log(uploadedUrls)
             // Gom mảng uploadedUrls và newImages lại thành một mảng duy nhất
-            const allImages = uploadedUrls.concat(newImages || []);  // Nếu newImages không có thì sẽ là mảng rỗng
+            const allImages = uploadedUrls.concat(newImage || []);  // Nếu newImages không có thì sẽ là mảng rỗng
+            
+            console.log(allImages)
             await tourService.UpdateTour(tourId, title, brief, detail, location, price, rate, voucher, allImages, details);
             
             return res.status(200).json({ success: true, message: 'Tour added successfully'});
