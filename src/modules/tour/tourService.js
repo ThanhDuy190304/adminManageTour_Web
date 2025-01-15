@@ -35,10 +35,10 @@ class TourService {
             uploadedUrls.forEach(async (uploadedUrl, index) => {
                 await tourModel.addImageTour(tourId,uploadedUrl, index);
             });
-            detailed.forEach(async (detail_tour) => {
+            for (let detail_tour of detailed) {
                 console.log(detail_tour); // Kiểm tra thông tin từng đối tượng
                 await tourModel.updateDetailedTour(tourId, detail_tour.detail_tour_id, detail_tour.date, detail_tour.status, detail_tour.maxQuantity);
-            });
+            }
         } catch (err) {
             throw new Error(err.message);
         }

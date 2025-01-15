@@ -18,12 +18,8 @@ class tourModel {
                                         from locations
                                         where location_name = $5),$6,$7,$8);
                         `;
-        const nextDetailTour = await tourModel.getNextIDDetail();
-        const query3 = `Insert into detail_tours(detail_tour_id, tour_id, status, tour_date, booked_quantity, max_quantity)
-                        values ($1, $2, 'available', '2025-01-28', 0, 50)`;
         try {
             await db.query(query, [tourID,title,brief,detail,location,price,rate,voucher]);
-            await db.query(query3, [nextDetailTour, tourID]);
         } catch (err) {
             console.log("Error in tourModel", err);
         }
@@ -31,8 +27,6 @@ class tourModel {
     }
 
     static async updateDetailedTour(tourId, detail_tour_id, date, status, maxQuantity) {
-        
-        console.log("updateDetailedTour",tourId, detail_tour_id, date, status, maxQuantity)
         const query = `Update detail_tours
                         Set tour_date = $3, status = $4, max_quantity = $5
                         Where detail_tour_id = $2 AND tour_id = $1
@@ -46,7 +40,6 @@ class tourModel {
     }
 
     static async deleteImageTour(tourID) {
-        console.log("deleteImageTour",tourID)
         const query = `delete from tour_images
                         where tour_id = $1;
                         `;
@@ -59,7 +52,6 @@ class tourModel {
     }
 
     static async addImageTour(touID,uploadedUrl, index) {
-        console.log("addImageTour",touID,uploadedUrl, index)
         const query = `Insert into tour_images(img_id, tour_id, img_url)
                         values ($3,$1,$2);
                         `;
@@ -71,26 +63,47 @@ class tourModel {
         return null;
     }
 
-    static async addDetailedTour(touID,date,status,maxQuantity, index) {
-        const query = `Insert into detail_tours(detail_tour_id, tour_id, status, tour_date, booked_quantity, max_quantity)
-                        values ((SELECT 
-                            CASE 
-                                WHEN MAX(CAST(SUBSTRING(detail_tour_id, 2) AS INTEGER)) IS NULL THEN 'd001'
-                                ELSE CONCAT('d', LPAD(CAST(MAX(CAST(SUBSTRING(detail_tour_id, 2) AS INTEGER)) + 1 AS CHAR), 3, '0'))
-                            END AS next_detail_tour_id
-                        FROM detail_tours
-                        WHERE tour_id = '$1'),$1,$3,$2,0,$4);
-                        `;
+    static async addDetailedTour(touID, date, status, maxQuantity, index) {
+        const client = await db.connect(); // Kết nối tới cơ sở dữ liệu
         try {
-            await db.query(query, [touID,date,status,maxQuantity, index]);
+            // Bắt đầu giao dịch
+            await client.query('BEGIN');
+            
+            // Truy vấn để lấy giá trị `next_detail_tour_id` mới
+            const result = await client.query(
+                `SELECT 
+                    CASE 
+                        WHEN MAX(CAST(SUBSTRING(detail_tour_id, 2) AS INTEGER)) IS NULL THEN 'd001'
+                        ELSE CONCAT('d', LPAD(CAST(MAX(CAST(SUBSTRING(detail_tour_id, 2) AS INTEGER)) + 1 AS CHAR), 3, '0'))
+                    END AS next_detail_tour_id
+                FROM detail_tours
+                WHERE tour_id = $1`,
+                [touID]
+            );
+    
+            const nextDetailTourID = result.rows[0].next_detail_tour_id;
+    
+            // Chèn bản ghi vào bảng `detail_tours`
+            await client.query(
+                `INSERT INTO detail_tours(detail_tour_id, tour_id, status, tour_date, booked_quantity, max_quantity)
+                VALUES ($1, $2, $3, $4, 0, $5)`,
+                [nextDetailTourID, touID, status, date, maxQuantity]
+            );
+    
+            // Commit giao dịch sau khi thực hiện thành công các truy vấn
+            await client.query('COMMIT');
         } catch (err) {
-            console.log("Error in tourModel", err);
+            // Nếu có lỗi, hủy bỏ giao dịch
+            await client.query('ROLLBACK');
+            console.log("Error in addDetailedTour:", err);
+        } finally {
+            // Đảm bảo kết thúc kết nối
+            client.release();
         }
         return null;
     }
 
     static async UpdateTour(tourId, title,brief,detail,location,price,rate,voucher) {
-        console.log(tourId, title,brief,detail,location,price,rate,voucher)
         const query = `UPDATE tours
                         SET title=$2,brief=$3,details=$4,location_id=(select location_id
                                                                     from locations
