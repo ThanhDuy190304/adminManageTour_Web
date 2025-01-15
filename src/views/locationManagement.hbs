@@ -1,0 +1,72 @@
+<div class="container mx-auto py-6">
+    <h1 class="text-2xl font-bold mb-6">Manage Locations</h1>
+
+    <!-- Button to trigger the add location dialog -->
+    <div class="flex justify-end mb-4">
+        <button class="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-600" id="openDialogButton">
+            Add Location
+        </button>
+    </div>
+
+    <!-- Table for locations -->
+    <table class="table-auto w-full border-collapse border border-gray-200 rounded-lg" id="locationTable">
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="border border-gray-300 px-4 py-2 text-left">ID</th>
+                <th class="border border-gray-300 px-4 py-2 text-left">Name</th>
+                <th class="border border-gray-300 px-4 py-2 text-left">Details</th>
+                <th class="border border-gray-300 px-4 py-2 text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be dynamically inserted here -->
+        </tbody>
+    </table>
+
+    <!-- Dialog to add new location -->
+    <div id="locationDialog" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center hidden">
+        <div class="bg-white p-6 rounded-md max-w-md w-full">
+            <h2 class="text-xl font-semibold mb-4">Add New Location</h2>
+            <form id="addLocationForm" class="grid grid-cols-1 gap-4">
+                <input type="text" id="locationName" name="locationName" placeholder="Location Name"
+                    class="border border-gray-300 px-4 py-2 rounded-md focus:ring focus:ring-blue-200" required>
+                <input type="text" id="locationDetails" name="locationDetails" placeholder="Location Details"
+                    class="border border-gray-300 px-4 py-2 rounded-md focus:ring focus:ring-blue-200" required>
+                <div class="flex justify-between">
+                    <button type="button" class="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+                        id="cancelButton">Cancel</button>
+                    <button type="submit" class="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-600"
+                        id="addLocationButton">
+                        Add Location
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div id="editLocationDialog" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center hidden">
+    <div class="bg-white p-6 rounded-md max-w-md w-full">
+        <h2 class="text-xl font-semibold mb-4">Edit Location</h2>
+        <form id="editLocationForm" class="grid grid-cols-1 gap-4">
+            <input type="text" id="editLocationName" name="editLocationName" placeholder="Location Name"
+                class="border border-gray-300 px-4 py-2 rounded-md focus:ring focus:ring-blue-200" required />
+            <input type="text" id="editLocationDetails" name="editLocationDetails" placeholder="Location Details"
+                class="border border-gray-300 px-4 py-2 rounded-md focus:ring focus:ring-blue-200" required />
+            <div class="flex justify-between">
+                <button type="button" class="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+                    id="cancelEditButton">
+                    Cancel
+                </button>
+                <button type="submit" class="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-600"
+                    id="saveEditButton">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script src="/js/locationManagement.js"></script>

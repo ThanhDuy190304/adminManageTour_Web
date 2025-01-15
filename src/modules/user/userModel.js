@@ -1,6 +1,7 @@
 const db = require('../../config/db');
 
 class UserModel {
+    
     static async getNumberOfUser() {
         const query = `SELECT 
                             COUNT(DISTINCT t.tourist_id) + COUNT(DISTINCT a.admin_id) AS total,
@@ -20,12 +21,27 @@ class UserModel {
         return null;
     }
 
-    static async getAllUsers() {
+    static async getCountFilterUser(name_email){
+        try {
+            const searchTerm = `%${name_email}%`;
+            const query = `SELECT COUNT(u.user_id) AS count_users
+                        FROM users u, roles r
+                        WHERE u.role_id = r.id and (u.user_name LIKE $1 OR u.email LIKE $1)`
+            const result = await db.query(query, [searchTerm]);
+            console.log("model: ",result.rows[0]);
+            return result.rows[0];
+        } catch (error) {
+            console.log('Error in userModel: ', error);
+        }
+    }
+
+    static async getAllUsers(sortBy, order, page) {
         try {
             const query = `SELECT u.user_id, u.user_name, u.email, u.is_banned, r.role_name
                         FROM users u, roles r
                         WHERE u.role_id = r.id
-                        ORDER BY u.user_name ASC`
+                        ORDER BY ${sortBy} ${order}
+                        LIMIT 2 OFFSET ${(page-1)*2}`
             const result = await db.query(query);
             return result.rows;
         }
@@ -34,12 +50,15 @@ class UserModel {
         }
     }
 
-    static async filterUsers(name_email) {
+    static async filterUsers(name_email, sortBy, order, page) {
         try {
+            const searchTerm = `%${name_email}%`;
             const query = `SELECT DISTINCT u.user_id, u.user_name, u.email, u.is_banned, r.role_name
                         FROM users u, roles r
-                        WHERE u.role_id = r.id and (u.user_name = $1 or u.email = $1)`
-            const result = await db.query(query, [name_email]);
+                        WHERE u.role_id = r.id and (u.user_name LIKE $1 OR u.email LIKE $1)
+                        ORDER BY ${sortBy} ${order}
+                        LIMIT 2 OFFSET ${(page-1)*2}`
+            const result = await db.query(query, [searchTerm]);
             return result.rows;
         } catch (error) {
             console.log('Error in userModel: ', error);

@@ -1,0 +1,41 @@
+<section>
+    <a href="/reportByIncome"
+        class="ml-auto p-5 mb-4 text-lg hover:bg-blue-700 rounded-lg focus:bg-blue-700 flex items-center">
+        <span>ReportsByIncome</span>
+    </a>
+    <div class="flex mb-4">
+        <div class="mr-4">
+            <label for="tourName" class="text-sm font-medium text-gray-700">Tour name</label>
+            <select id="tourName" class="p-2 border border-gray-300 rounded-lg">
+            </select>
+        </div>
+        <div class="mr-4">
+            <label for="sortBy" class="text-sm font-medium text-gray-700">Sort by</label>
+            <select id="sortBy" class="p-2 border border-gray-300 rounded-lg">
+                <option value="yearSort"> year</option>
+                <option value="monthSort">month</option>
+                <option value="daySort">day</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto bg-white p-4 rounded-lg shadow-md">
+        <div class="overflow-x-auto bg-white p-4 rounded-lg shadow-md">
+            <table class="min-w-full table-auto">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="px-4 py-2 text-left">Time</th>
+                        <th class="px-4 py-2 text-left">Total money</th>
+                    </tr>
+                </thead>
+                <tbody id="venueList">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+</section>
+<script src="/js/reportByTour.js"></script>
