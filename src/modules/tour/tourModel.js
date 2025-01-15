@@ -64,41 +64,13 @@ class tourModel {
     }
 
     static async addDetailedTour(touID, date, status, maxQuantity, index) {
-        const client = await db.connect(); // Kết nối tới cơ sở dữ liệu
+        const query = `INSERT INTO detail_tours(tour_id, status, tour_date, booked_quantity, max_quantity)
+        VALUES ($1, $2, $3, 0, $4);
+                        `;
         try {
-            // Bắt đầu giao dịch
-            await client.query('BEGIN');
-            
-            // Truy vấn để lấy giá trị `next_detail_tour_id` mới
-            const result = await client.query(
-                `SELECT 
-                    CASE 
-                        WHEN MAX(CAST(SUBSTRING(detail_tour_id, 2) AS INTEGER)) IS NULL THEN 'd001'
-                        ELSE CONCAT('d', LPAD(CAST(MAX(CAST(SUBSTRING(detail_tour_id, 2) AS INTEGER)) + 1 AS CHAR), 3, '0'))
-                    END AS next_detail_tour_id
-                FROM detail_tours
-                WHERE tour_id = $1`,
-                [touID]
-            );
-    
-            const nextDetailTourID = result.rows[0].next_detail_tour_id;
-    
-            // Chèn bản ghi vào bảng `detail_tours`
-            await client.query(
-                `INSERT INTO detail_tours(detail_tour_id, tour_id, status, tour_date, booked_quantity, max_quantity)
-                VALUES ($1, $2, $3, $4, 0, $5)`,
-                [nextDetailTourID, touID, status, date, maxQuantity]
-            );
-    
-            // Commit giao dịch sau khi thực hiện thành công các truy vấn
-            await client.query('COMMIT');
+            await db.query(query, [touID, status, date, maxQuantity]);
         } catch (err) {
-            // Nếu có lỗi, hủy bỏ giao dịch
-            await client.query('ROLLBACK');
-            console.log("Error in addDetailedTour:", err);
-        } finally {
-            // Đảm bảo kết thúc kết nối
-            client.release();
+            console.log("Error in tourModel", err);
         }
         return null;
     }
@@ -189,7 +161,6 @@ class tourModel {
             ${filterSort}
             LIMIT 6 OFFSET ${(page - 1) * 6}
         `;
-        console.log(dataQuery)
 		try {
 			const paginatedTours = await db.query(dataQuery);
 			const totalPages = await db.query(countQuery);
